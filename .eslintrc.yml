@@ -2,6 +2,6 @@ env:
   es6: true
   browser: true
   commonjs: true
-parserOptions":
+parserOptions:
   sourceType: 'module'
 extends: 'htmlacademy/es6'
