@@ -1,6 +1,6 @@
 const path = require("path");
 
-module.exports = ({ mode }) => ({
+module.exports = ({mode}) => ({
   mode,
   entry: "./src/main.js",
   output: {
@@ -11,7 +11,6 @@ module.exports = ({ mode }) => ({
     contentBase: path.resolve(__dirname, "public"),
     compress: true,
     port: 3000,
-    hot: true,
   },
   devtool: "source-map",
 });

@@ -3,5 +3,5 @@ env:
   browser: true
   commonjs: true
 parserOptions:
-  sourceType: 'module'
-extends: 'htmlacademy/es6'
+  sourceType: "module"
+extends: ["htmlacademy/es6"]
