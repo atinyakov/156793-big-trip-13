@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
+import {createElement} from '../helpers/utils';
 
-export const createTripHeader = (points) => {
+
+const createHeader = (points) => {
   const cost = points.reduce((acc, {price})=> {
     return acc + +price;
   }, 0);
@@ -24,3 +26,26 @@ export const createTripHeader = (points) => {
   </p>
 </section>`;
 };
+
+export default class Header {
+  constructor(data) {
+    this._element = null;
+    this._data = data;
+  }
+
+  getTemplate() {
+    return createHeader(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

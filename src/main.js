@@ -1,20 +1,19 @@
 import dayjs from "dayjs";
 
-import {createListFilters} from "./view/listFilters";
-import {createMenu} from "./view/menu";
-import {createTripHeader} from "./view/tripHeader";
-import {createSorting} from "./view/sorting";
-import {createPoint} from "./view/point";
-import {createPointEditor} from "./view/pointEdit";
+import {render, RenderPosition} from './helpers/utils';
+
+import Filters from "./view/filters";
+import Menu from "./view/menu";
+import Header from "./view/header";
+import Sorting from "./view/sorting";
+import Point from "./view/point";
+import Editor from "./view/editor";
 import {createPointData} from "./mock/point";
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-controls`);
 const tripSorting = document.querySelector(`.trip-events`);
 
-const render = (target, markup, position = `beforeend`) => {
-  target.insertAdjacentHTML(position, markup);
-};
 
 const points = Array(20)
   .fill()
@@ -23,18 +22,41 @@ const points = Array(20)
     return dayjs(a.startTime).diff(b.startTime, `m`) < 0 ? 1 : -1;
   });
 
-const [edit, ...restPoints] = points;
-render(tripMain, createTripHeader(points), `afterbegin`);
-
-render(tripControls, createListFilters());
-render(tripControls, createMenu(), `afterbegin`);
-render(tripSorting, createSorting(), `afterbegin`);
+render(tripMain, new Header(points).getElement(), RenderPosition.AFTERBEGIN);
+render(tripControls, new Filters().getElement(), RenderPosition.BEFOREEND);
+render(tripControls, new Menu().getElement(), RenderPosition.AFTERBEGIN);
+render(tripSorting, new Sorting().getElement(), RenderPosition.AFTERBEGIN);
 
 const pointList = document.createElement(`ul`);
 pointList.classList.add(`trip-events__list`);
-
 tripSorting.appendChild(pointList);
 
-render(pointList, createPointEditor(edit, 1, `add`));
+points.forEach((point, index) => {
+  const pointElem = new Point(point);
+  const editorElem = new Editor(point, index, `edit`);
 
-restPoints.forEach((point) => render(pointList, createPoint(point)));
+  pointElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    pointList.replaceChild(editorElem.getElement(), pointElem.getElement());
+  });
+
+  editorElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
+  });
+
+  editorElem.getElement().querySelector(`form`).addEventListener(`submit`, (e) => {
+    e.preventDefault();
+
+    // console.log(`SAVE`);
+    pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
+  });
+
+  editorElem.getElement().querySelector(`form`).addEventListener(`reset`, (e) => {
+    e.preventDefault();
+
+    // console.log(`DELETE`);
+    pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
+
+  });
+
+  render(pointList, pointElem.getElement(), RenderPosition.BEFOREEND);
+});

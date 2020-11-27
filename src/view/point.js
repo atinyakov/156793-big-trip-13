@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {createElement} from '../helpers/utils';
 
 const duration = (start, end) => {
   const minutes = dayjs(end).diff(start, `m`);
@@ -10,7 +11,7 @@ const duration = (start, end) => {
   return hasDays ? dayjs(dayjs(end).diff(start)).format(`DD[D] HH[H] mm[M]`) : dayjs(dayjs(end).diff(start, `m`)).format(` HH[H] mm[M]`);
 };
 
-export const createPoint = ({
+const createTemplate = ({
   type = `train`,
   destination = `Moscow`,
   price: eventPtice,
@@ -22,8 +23,7 @@ export const createPoint = ({
   const favoriteClasslist = `event__favorite-btn ${isFavorite && `event__favorite-btn--active`}`;
 
 
-  return `
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="datetime="${startTime}">${dayjs(startTime).format(`MMM D`)}</time>
     <div class="event__type">
@@ -43,13 +43,13 @@ export const createPoint = ({
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${offers.map(({title, price}) => {
-    return `<li class="event__offer">
+      ${offers.reduce((acc, {title, price}) => {
+    return acc + `<li class="event__offer">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
       </li>`;
-  })}
+  }, ``)}
     </ul>
     <button class="${favoriteClasslist}" type="button">
       <span class="visually-hidden">Add to favorite</span>
@@ -63,3 +63,26 @@ export const createPoint = ({
   </div>
 </li>`;
 };
+
+export default class Point {
+  constructor(data) {
+    this._element = null;
+    this._data = data;
+  }
+
+  getTemplate() {
+    return createTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

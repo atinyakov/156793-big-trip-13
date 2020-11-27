@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
+import {createElement} from '../helpers/utils';
 
 import {OFFERS, CITIES} from '../mock/constants';
 
-export const createPointEditor = ({
+const createEditor = ({
   type = `train`,
   destination = `Moscow`,
   price: eventPtice = 0,
@@ -149,11 +150,34 @@ export const createPointEditor = ({
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${description}</p>
-        <div class="event__photos-container">
-          ${mode === `add` && `<div class="event__photos-tape">${picturesMarkup}</div>`}
-      </div>
+        ${mode === `add` ? `<div class="event__photos-container">
+           <div class="event__photos-tape">${picturesMarkup}</div>
+        </div>` : ``}
       </section>
     </section>
   </form>
 </li>`;
 };
+
+export default class Editor {
+  constructor(...data) {
+    this._element = null;
+    this._data = data;
+  }
+
+  getTemplate() {
+    return createEditor(...this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
