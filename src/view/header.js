@@ -3,11 +3,14 @@ import {createElement} from '../helpers/utils';
 
 
 const createHeader = (points) => {
-  const cost = points.reduce((acc, {price})=> {
+  const cost = points.length ? points.reduce((acc, {price})=> {
     return acc + +price;
-  }, 0);
+  }, 0) : 0;
 
   const title = () => {
+    if (points.length === 0) {
+      return ``;
+    }
     if (points.length > 3) {
       return `${points[0].destination} &mdash; ... &mdash; ${points[points.length - 1].destination}`;
     }
@@ -18,7 +21,7 @@ const createHeader = (points) => {
   <div class="trip-info__main">
     <h1 class="trip-info__title">${title()}</h1>
 
-    <p class="trip-info__dates">${dayjs(points[0].startDate).format(`MMM D`)} &nbsp; &mdash;&nbsp;${dayjs(points[points.length - 1].startDate).format(`MMM D`)}</p>
+    <p class="trip-info__dates">${points.length ? dayjs(points[0].startDate).format(`MMM D`) : ``} &nbsp; &mdash;&nbsp;${points.length ? dayjs(points[points.length - 1].startDate).format(`MMM D`) : ``}</p>
   </div>
 
   <p class="trip-info__cost">
@@ -28,7 +31,7 @@ const createHeader = (points) => {
 };
 
 export default class Header {
-  constructor(data) {
+  constructor(data = []) {
     this._element = null;
     this._data = data;
   }
