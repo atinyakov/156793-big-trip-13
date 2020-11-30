@@ -19,7 +19,7 @@ const tripSorting = document.querySelector(`.trip-events`);
 const points = Array(20)
   .fill()
   .map(() => createPointData())
-  .sort((a, b)=> {
+  .sort((a, b) => {
     return dayjs(a.startTime).diff(b.startTime, `m`) < 0 ? 1 : -1;
   });
 
@@ -40,36 +40,25 @@ if (points.length > 0) {
 
     const closeEditor = (e) => {
       e.preventDefault();
+      pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
+      document.removeEventListener(`keydown`, closeEditorByEsc);
+    };
+    const closeEditorByEsc = (e) => {
       if (e.key === `Escape` || e.key === `Esc`) {
-        pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
-        document.removeEventListener(`keydown`, closeEditor);
+        closeEditor(e);
       }
     };
 
     pointElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
       pointList.replaceChild(editorElem.getElement(), pointElem.getElement());
-      document.addEventListener(`keydown`, closeEditor);
+      document.addEventListener(`keydown`, closeEditorByEsc);
     });
 
-    editorElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
-      closeEditor();
-    });
+    editorElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, closeEditor);
 
-    editorElem.getElement().querySelector(`form`).addEventListener(`submit`, (e) => {
-      e.preventDefault();
+    editorElem.getElement().querySelector(`form`).addEventListener(`submit`, closeEditor);
 
-      // console.log(`SAVE`);
-      closeEditor();
-    });
-
-
-    editorElem.getElement().querySelector(`form`).addEventListener(`reset`, (e) => {
-      e.preventDefault();
-
-      // console.log(`DELETE`);
-      closeEditor();
-
-    });
+    editorElem.getElement().querySelector(`form`).addEventListener(`reset`, closeEditor);
 
     render(pointList, pointElem.getElement(), RenderPosition.BEFOREEND);
   });
