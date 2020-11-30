@@ -38,37 +38,30 @@ if (points.length > 0) {
     const pointElem = new Point(point);
     const editorElem = new Editor(point, index, `edit`);
 
+
     const closeEditor = (e) => {
       e.preventDefault();
+
+      pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
+    };
+
+    const handleEscape = (e) => {
       if (e.key === `Escape` || e.key === `Esc`) {
-        pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
-        document.removeEventListener(`keydown`, closeEditor);
+        closeEditor(e);
+        document.removeEventListener(`keydown`, handleEscape);
       }
     };
 
+
+    editorElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, closeEditor);
+
+    editorElem.getElement().querySelector(`form`).addEventListener(`submit`, closeEditor);
+
+    editorElem.getElement().querySelector(`form`).addEventListener(`reset`, (e) => closeEditor(e));
+
     pointElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
       pointList.replaceChild(editorElem.getElement(), pointElem.getElement());
-      document.addEventListener(`keydown`, closeEditor);
-    });
-
-    editorElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
-      closeEditor();
-    });
-
-    editorElem.getElement().querySelector(`form`).addEventListener(`submit`, (e) => {
-      e.preventDefault();
-
-      // console.log(`SAVE`);
-      closeEditor();
-    });
-
-
-    editorElem.getElement().querySelector(`form`).addEventListener(`reset`, (e) => {
-      e.preventDefault();
-
-      // console.log(`DELETE`);
-      closeEditor();
-
+      document.addEventListener(`keydown`, handleEscape);
     });
 
     render(pointList, pointElem.getElement(), RenderPosition.BEFOREEND);
