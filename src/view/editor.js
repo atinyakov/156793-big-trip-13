@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {createElement} from '../helpers/utils';
+import Abstract from './abstract';
 
 import {OFFERS, CITIES} from '../mock/constants';
 
@@ -159,25 +159,49 @@ const createEditor = ({
 </li>`;
 };
 
-export default class Editor {
+export default class Editor extends Abstract {
   constructor(...data) {
-    this._element = null;
+    super();
     this._data = data;
+    this._callback = {};
+    this._clickHandler = this._clickHandler.bind(this);
+    this._resetHandler = this._resetHandler.bind(this);
   }
 
   getTemplate() {
     return createEditor(...this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(e) {
+    e.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  _submitHandler(e) {
+    e.preventDefault();
+    this._callback.submit();
+  }
+
+  _resetHandler(e) {
+    e.preventDefault();
+    this._callback.reset();
+  }
+
+  setClickHandler(cb) {
+    this._callback.click = cb;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._clickHandler);
+  }
+
+  setSubmitHandler(cb) {
+    this._callback.submit = cb;
+
+    this.getElement().querySelector(`form`).addEventListener(`submit`, (e) => this._submitHandler(e));
+  }
+
+  setResetHandler(cb) {
+    this._callback.reset = cb;
+
+    this.getElement().querySelector(`form`).addEventListener(`reset`, this._resetHandler);
+
   }
 }

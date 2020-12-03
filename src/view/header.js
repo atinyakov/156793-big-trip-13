@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
-import {createElement} from '../helpers/utils';
-
+import Abstract from './abstract';
 
 const createHeader = (points) => {
   const cost = points.length ? points.reduce((acc, {price})=> {
@@ -30,25 +29,13 @@ const createHeader = (points) => {
 </section>`;
 };
 
-export default class Header {
+export default class Header extends Abstract {
   constructor(data = []) {
-    this._element = null;
+    super();
     this._data = data;
   }
 
   getTemplate() {
     return createHeader(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

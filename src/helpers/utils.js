@@ -1,3 +1,5 @@
+import Absctract from '../view/abstract';
+
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -11,6 +13,14 @@ export const RenderPosition = {
 };
 
 export const render = (target, markup, place) => {
+  if (markup instanceof Absctract) {
+    markup = markup.getElement();
+  }
+
+  if (target instanceof Absctract) {
+    target = target.getElement();
+  }
+
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       target.prepend(markup);
@@ -25,4 +35,16 @@ export const createElement = (template) => {
   newElement.innerHTML = template;
 
   return newElement.firstChild;
+};
+
+export const replace = (target, oldChild, newChild) => {
+  if (oldChild instanceof Absctract) {
+    oldChild = oldChild.getElement();
+  }
+
+  if (newChild instanceof Absctract) {
+    newChild = newChild.getElement();
+  }
+
+  target.replaceChild(oldChild, newChild);
 };

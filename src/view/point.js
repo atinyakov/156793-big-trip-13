@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {createElement} from '../helpers/utils';
+import Abstract from './abstract';
 
 const duration = (start, end) => {
   const minutes = dayjs(end).diff(start, `m`);
@@ -64,25 +64,27 @@ const createTemplate = ({
 </li>`;
 };
 
-export default class Point {
+export default class Point extends Abstract {
   constructor(data) {
-    this._element = null;
+    super();
     this._data = data;
+    this._callback = {};
   }
 
   getTemplate() {
     return createTemplate(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
+  _clickHandler(e) {
+    e.preventDefault();
 
-    return this._element;
+    this._callback.click(e);
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(cb) {
+    this._callback.click = cb;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, (e) => {
+      this._clickHandler(e);
+    });
   }
 }

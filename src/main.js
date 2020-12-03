@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import {render, RenderPosition} from './helpers/utils';
+import {render, RenderPosition, replace} from './helpers/utils';
 
 import Filters from "./view/filters";
 import Menu from "./view/menu";
@@ -23,45 +23,43 @@ const points = Array(20)
     return dayjs(a.startTime).diff(b.startTime, `m`) < 0 ? 1 : -1;
   });
 
-render(tripMain, new Header(points).getElement(), RenderPosition.AFTERBEGIN);
-render(tripControls, new Filters().getElement(), RenderPosition.BEFOREEND);
-render(tripControls, new Menu().getElement(), RenderPosition.AFTERBEGIN);
+render(tripMain, new Header(points), RenderPosition.AFTERBEGIN);
+render(tripControls, new Filters(), RenderPosition.BEFOREEND);
+render(tripControls, new Menu(), RenderPosition.AFTERBEGIN);
 
 
 if (points.length > 0) {
   const pointList = document.createElement(`ul`);
   pointList.classList.add(`trip-events__list`);
   tripSorting.appendChild(pointList);
-  render(tripSorting, new Sorting().getElement(), RenderPosition.AFTERBEGIN);
+  render(tripSorting, new Sorting(), RenderPosition.AFTERBEGIN);
 
   points.forEach((point, index) => {
     const pointElem = new Point(point);
     const editorElem = new Editor(point, index, `edit`);
 
-    const closeEditor = (e) => {
-      e.preventDefault();
-      pointList.replaceChild(pointElem.getElement(), editorElem.getElement());
+    const closeEditor = () => {
+      replace(pointList, pointElem, editorElem);
       document.removeEventListener(`keydown`, closeEditorByEsc);
     };
     const closeEditorByEsc = (e) => {
       if (e.key === `Escape` || e.key === `Esc`) {
-        closeEditor(e);
+        closeEditor();
       }
     };
 
-    pointElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
-      pointList.replaceChild(editorElem.getElement(), pointElem.getElement());
+    pointElem.setClickHandler(() => {
+      replace(pointList, editorElem, pointElem);
+
       document.addEventListener(`keydown`, closeEditorByEsc);
     });
 
-    editorElem.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, closeEditor);
+    editorElem.setClickHandler(closeEditor);
+    editorElem.setSubmitHandler(closeEditor);
+    editorElem.setResetHandler(closeEditor);
 
-    editorElem.getElement().querySelector(`form`).addEventListener(`submit`, closeEditor);
-
-    editorElem.getElement().querySelector(`form`).addEventListener(`reset`, closeEditor);
-
-    render(pointList, pointElem.getElement(), RenderPosition.BEFOREEND);
+    render(pointList, pointElem, RenderPosition.BEFOREEND);
   });
 } else {
-  render(tripSorting, new Empty().getElement(), RenderPosition.BEFOREEND);
+  render(tripSorting, new Empty(), RenderPosition.BEFOREEND);
 }
