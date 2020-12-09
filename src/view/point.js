@@ -75,16 +75,29 @@ export default class Point extends Abstract {
     return createTemplate(this._data);
   }
 
-  _clickHandler(e) {
+  _rollupHandler(e) {
     e.preventDefault();
 
-    this._callback.click(e);
+    this._callback.rollup(e);
   }
 
-  setClickHandler(cb) {
-    this._callback.click = cb;
+  _favoriteHandler(e) {
+    e.preventDefault();
+
+    this._callback.favorite();
+  }
+
+  setRollupHandler(cb) {
+    this._callback.rollup = cb;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, (e) => {
-      this._clickHandler(e);
+      this._rollupHandler(e);
+    });
+  }
+
+  setFavoriteHandler(cb) {
+    this._callback.favorite = cb;
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, (e) => {
+      this._favoriteHandler(e);
     });
   }
 }

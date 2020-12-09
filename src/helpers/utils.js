@@ -37,7 +37,7 @@ export const createElement = (template) => {
   return newElement.firstChild;
 };
 
-export const replace = (target, oldChild, newChild) => {
+export const replace = (newChild, oldChild) => {
   if (oldChild instanceof Absctract) {
     oldChild = oldChild.getElement();
   }
@@ -46,5 +46,17 @@ export const replace = (target, oldChild, newChild) => {
     newChild = newChild.getElement();
   }
 
-  target.replaceChild(oldChild, newChild);
+  const parent = oldChild.parentElement;
+
+  parent.replaceChild(newChild, oldChild);
+};
+
+export const updateItem = (items, update) => {
+  const idx = items.findIndex((el) => el.id === update.id);
+  if (idx === -1) {
+    return items;
+  }
+
+  return [...items.slice(0, idx), update, ...items.slice(idx + 1)];
+
 };

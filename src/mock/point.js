@@ -1,12 +1,14 @@
 import {POINT_TYPE, CITIES, SENTENCES, mapTypeToOffer} from "./constants";
 import {getRandomInteger} from "../helpers/utils";
 import dayjs from "dayjs";
+import {nanoid} from 'nanoid';
 
 
-export const createPointData = () => {
+const createPointData = () => {
   const pointPosition = getRandomInteger(0, POINT_TYPE.length - 1);
 
   return {
+    id: nanoid(10),
     type: POINT_TYPE[pointPosition],
     destination: CITIES[getRandomInteger(0, CITIES.length - 1)],
     startTime: dayjs(
@@ -28,3 +30,10 @@ export const createPointData = () => {
     }, ``)
   };
 };
+
+export const points = Array(20)
+  .fill()
+  .map(() => createPointData())
+  .sort((a, b) => {
+    return dayjs(a.startTime).diff(b.startTime, `m`) < 0 ? 1 : -1;
+  });
