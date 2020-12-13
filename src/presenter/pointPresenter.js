@@ -1,10 +1,18 @@
 import Point from "../view/point";
 import Editor from "../view/editor";
 import {render, RenderPosition, replace} from '../helpers/utils';
+
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`
+};
+
 export default class PointPresenter {
-  constructor(container, changeData) {
+  constructor(container, changeData, resetPoints) {
     this._container = container;
     this._changeData = changeData;
+    this._resetPoints = resetPoints;
+    this._mode = Mode.DEFAULT;
     this._closeEditor = this._closeEditor.bind(this);
     this._closeEditorByEsc = this._closeEditorByEsc.bind(this);
   }
@@ -13,6 +21,7 @@ export default class PointPresenter {
     this._point = point;
     this._pointIdx = index;
 
+
     const oldPoint = this._pointComponent;
     const oldEditor = this._pointEditorComponent;
 
@@ -20,9 +29,11 @@ export default class PointPresenter {
     this._pointEditorComponent = new Editor(point, index, `edit`);
 
     this._pointComponent.setRollupHandler(() => {
-      replace(this._pointEditorComponent, this._pointComponent);
 
       document.addEventListener(`keydown`, this._closeEditorByEsc);
+      this._resetPoints();
+      replace(this._pointEditorComponent, this._pointComponent);
+      this._mode = Mode.EDITING;
     });
 
     this._pointComponent.setFavoriteHandler(() => {
@@ -39,12 +50,21 @@ export default class PointPresenter {
       return;
     }
 
-    replace(this._pointComponent, oldPoint);
+
+    if (this._mode === Mode.DEFAULT) {
+      replace(this._pointEditorComponent, oldPoint);
+    }
+
+    if (this._mode === Mode.DEFAULT) {
+      replace(oldPoint, oldEditor);
+    }
+
   }
 
   _closeEditor() {
     replace(this._pointComponent, this._pointEditorComponent);
     document.removeEventListener(`keydown`, this.closeEditorByEsc);
+    this.mode = Mode.DEFAULT;
   }
 
   _closeEditorByEsc(e) {
@@ -53,4 +73,11 @@ export default class PointPresenter {
     }
   }
 
+  resetView() {
+    if (this._mode === Mode.EDITING) {
+
+      this._closeEditor();
+
+    }
+  }
 }

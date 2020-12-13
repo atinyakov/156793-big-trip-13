@@ -64,6 +64,7 @@ const createTemplate = ({
 </li>`;
 };
 
+
 export default class Point extends Abstract {
   constructor(data) {
     super();
