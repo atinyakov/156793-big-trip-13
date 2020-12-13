@@ -49,6 +49,7 @@ export const replace = (newChild, oldChild) => {
   const parent = oldChild.parentElement;
 
   parent.replaceChild(newChild, oldChild);
+  // console.log(`replaced`);
 };
 
 export const updateItem = (items, update) => {

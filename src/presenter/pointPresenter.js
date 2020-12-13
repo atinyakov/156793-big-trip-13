@@ -31,7 +31,9 @@ export default class PointPresenter {
     this._pointComponent.setRollupHandler(() => {
 
       document.addEventListener(`keydown`, this._closeEditorByEsc);
+
       this._resetPoints();
+
       replace(this._pointEditorComponent, this._pointComponent);
       this._mode = Mode.EDITING;
     });
@@ -51,12 +53,12 @@ export default class PointPresenter {
     }
 
 
-    if (this._mode === Mode.DEFAULT) {
+    if (this._mode === Mode.EDITING) {
       replace(this._pointEditorComponent, oldPoint);
     }
 
     if (this._mode === Mode.DEFAULT) {
-      replace(oldPoint, oldEditor);
+      replace(this._pointComponent, oldPoint);
     }
 
   }
@@ -64,7 +66,7 @@ export default class PointPresenter {
   _closeEditor() {
     replace(this._pointComponent, this._pointEditorComponent);
     document.removeEventListener(`keydown`, this.closeEditorByEsc);
-    this.mode = Mode.DEFAULT;
+    this._mode = Mode.DEFAULT;
   }
 
   _closeEditorByEsc(e) {
