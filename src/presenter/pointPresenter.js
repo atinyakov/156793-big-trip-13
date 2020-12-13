@@ -15,12 +15,12 @@ export default class PointPresenter {
     this._mode = Mode.DEFAULT;
     this._closeEditor = this._closeEditor.bind(this);
     this._closeEditorByEsc = this._closeEditorByEsc.bind(this);
+    this.getPointData = this.getPointData.bind(this);
   }
 
   init(point, index) {
     this._point = point;
     this._pointIdx = index;
-
 
     const oldPoint = this._pointComponent;
     const oldEditor = this._pointEditorComponent;
@@ -29,9 +29,7 @@ export default class PointPresenter {
     this._pointEditorComponent = new Editor(point, index, `edit`);
 
     this._pointComponent.setRollupHandler(() => {
-
       document.addEventListener(`keydown`, this._closeEditorByEsc);
-
       this._resetPoints();
 
       replace(this._pointEditorComponent, this._pointComponent);
@@ -47,11 +45,9 @@ export default class PointPresenter {
     this._pointEditorComponent.setResetHandler(this._closeEditor);
 
     if (oldPoint === undefined || oldEditor === undefined) {
-
       render(this._container, this._pointComponent, RenderPosition.AFTERBEGIN);
       return;
     }
-
 
     if (this._mode === Mode.EDITING) {
       replace(this._pointEditorComponent, oldPoint);
@@ -60,7 +56,6 @@ export default class PointPresenter {
     if (this._mode === Mode.DEFAULT) {
       replace(this._pointComponent, oldPoint);
     }
-
   }
 
   _closeEditor() {
@@ -77,9 +72,11 @@ export default class PointPresenter {
 
   resetView() {
     if (this._mode === Mode.EDITING) {
-
       this._closeEditor();
-
     }
+  }
+
+  getPointData() {
+    return this._point;
   }
 }

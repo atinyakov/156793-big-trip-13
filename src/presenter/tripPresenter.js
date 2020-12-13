@@ -4,16 +4,12 @@ import Sorting from "../view/sorting";
 import PointPresenter from './pointPresenter';
 
 import {render, RenderPosition, updateItem} from '../helpers/utils';
-
-// const Mode = {
-//   DEFAULT: `DEFAULT`,
-//   EDITING: `EDITING`
-// };
+import Observers from '../helpers/observers';
 
 export default class TripPresenter {
   constructor(target) {
     this._container = target;
-    this._pointList = {};
+    this._pointObserver = new Observers();
     this._empty = new Empty();
     this._sorting = new Sorting();
 
@@ -35,16 +31,17 @@ export default class TripPresenter {
     render(this._container, this._sorting, RenderPosition.AFTERBEGIN);
   }
 
-
   _updatePoint(update, index) {
     updateItem(this._points, update);
-    this._pointList[update.id].init(update, index);
+    this._pointObserver.update(update, index);
+
   }
 
   _renderPoint(container, point, index) {
     const pointPresenter = new PointPresenter(container, this.updatePoint, this.resetPoints);
     pointPresenter.init(point, index);
-    this._pointList[point.id] = pointPresenter;
+    this._pointObserver.subscribe(pointPresenter);
+
   }
 
   _renderPoints() {
@@ -64,14 +61,10 @@ export default class TripPresenter {
     }
 
     this._renderSorting();
-
     this._renderPoints();
   }
 
   _resetPoints() {
-    Object.values(this._pointList).forEach((pointPreseter) => {
-      pointPreseter.resetView();
-    });
+    this._pointObserver.run(`resetView`);
   }
-
 }
