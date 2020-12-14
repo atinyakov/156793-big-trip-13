@@ -8,6 +8,7 @@ export const POINT_TYPE = [
   `Check-in`,
   `Sightseeing`,
   `Restaurant`,
+  `Bus`,
 ];
 
 
@@ -17,7 +18,7 @@ export const CITIES = [
   `Самара`,
   `Тула`,
   `Уфа`,
-  `В. Новгород`,
+  `В.Новгород`,
 ];
 
 
@@ -58,6 +59,7 @@ export const mapTypeToOffer = new Map([
   [POINT_TYPE[6], [OFFERS[1]]],
   [POINT_TYPE[7], [OFFERS[2]]],
   [POINT_TYPE[8], [OFFERS[2]]],
+  [POINT_TYPE[9], [OFFERS[0]]],
 ]);
 
 export const SENTENCES = [

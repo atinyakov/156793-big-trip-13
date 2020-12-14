@@ -1,7 +1,9 @@
 import dayjs from "dayjs";
-import Abstract from './abstract';
+import Smart from './smart';
+import {replace} from '../helpers/utils';
+import {CITIES, mapTypeToOffer} from "../mock/constants";
 
-import {OFFERS, CITIES} from '../mock/constants';
+// import {OFFERS, CITIES} from '../mock/constants';
 
 const createEditor = ({
   type = `train`,
@@ -23,7 +25,9 @@ const createEditor = ({
     [`Order Uber`]: `uber`,
   };
 
-  const offersMarkup = OFFERS.reduce((acc, {title, price}) => {
+  const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
+
+  const offersMarkup = mapTypeToOffer.get(derivedType(type)).reduce((acc, {title, price}) => {
     return acc.concat(
         `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${map[title]}-${index}" type="checkbox" name="event-offer-${map[title]}" ${offers.findIndex((offer) => offer.title === title) !== -1 && `checked`}>
@@ -44,7 +48,7 @@ const createEditor = ({
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
-        <label class="event__type  event__type-btn" for="event-type-toggle-${index}}">
+        <label class="event__type  event__type-btn" for="event-type-toggle-${index}">
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </label>
@@ -113,7 +117,7 @@ const createEditor = ({
         </label>
         <input class="event__input  event__input--destination" id="event-destination-${index}" type="text" name="event-destination" value="${destination}" list="destination-list-${index}">
         <datalist id="destination-list-${index}">
-          ${CITIES.map((city) => `<option value=${city}></option>`)}
+          ${CITIES.reduce((acc, city) => acc + `<option value=${city}>${city}</option>`, ``)}
         </datalist>
       </div>
 
@@ -159,16 +163,19 @@ const createEditor = ({
 </li>`;
 };
 
-export default class Editor extends Abstract {
+export default class Editor extends Smart {
   constructor(...data) {
     super();
     this._data = data;
     this._callback = {};
     this._clickHandler = this._clickHandler.bind(this);
     this._resetHandler = this._resetHandler.bind(this);
+    this._typeHandler = this._typeHandler.bind(this);
+    // this.getTemplate = this.getTemplate.bind(this);
   }
 
   getTemplate() {
+    console.log(this._data);
     return createEditor(...this._data);
   }
 
@@ -185,6 +192,11 @@ export default class Editor extends Abstract {
   _resetHandler(e) {
     e.preventDefault();
     this._callback.reset();
+  }
+
+  _typeHandler(e) {
+    e.preventDefault();
+    this._callback.type(e);
   }
 
   setClickHandler(cb) {
@@ -204,4 +216,31 @@ export default class Editor extends Abstract {
     this.getElement().querySelector(`form`).addEventListener(`reset`, this._resetHandler);
 
   }
+
+  setTypeHandler(cb) {
+    this._callback.type = cb;
+
+    this.getElement().querySelector(`.event__type-group`).addEventListener(`change`, this._typeHandler);
+
+  }
+
+  updateElement() {
+    const oldEl = this.getElement();
+    super.removeElement();
+
+    const newEl = this.getElement();
+
+    replace(newEl, oldEl);
+
+    this.setTypeHandler(this._callback.type);
+  }
+
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+
+    this._data[0] = Object.assign({}, this._data[0], update);
+  }
+
 }

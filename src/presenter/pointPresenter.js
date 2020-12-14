@@ -43,6 +43,13 @@ export default class PointPresenter {
     this._pointEditorComponent.setClickHandler(this._closeEditor);
     this._pointEditorComponent.setSubmitHandler(this._closeEditor);
     this._pointEditorComponent.setResetHandler(this._closeEditor);
+    this._pointEditorComponent.setTypeHandler((e) => {
+      this._pointEditorComponent.updateData({type: e.target.value});
+      this._pointEditorComponent.updateElement();
+    });
+
+    // this._pointEditorComponent.restoreHandlers();
+
 
     if (oldPoint === undefined || oldEditor === undefined) {
       render(this._container, this._pointComponent, RenderPosition.AFTERBEGIN);
