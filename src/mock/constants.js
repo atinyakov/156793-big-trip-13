@@ -12,6 +12,8 @@ export const POINT_TYPE = [
 ];
 
 
+import {getRandomInteger} from "../helpers/utils";
+
 export const CITIES = [
   `Москва`,
   `Омск`,
@@ -20,6 +22,13 @@ export const CITIES = [
   `Уфа`,
   `В.Новгород`,
 ];
+const createDescription = () => Array(getRandomInteger(1, 4)).fill().reduce((acc) => {
+  return acc.concat(` ${SENTENCES[getRandomInteger(0, SENTENCES.length - 1)]}`);
+}, ``);
+
+const createPictures = () => Array(getRandomInteger(1, 5))
+.fill()
+.map(() => `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`);
 
 
 export const OFFERS = [
@@ -74,3 +83,16 @@ export const SENTENCES = [
   `Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
   `In rutrum ac purus sit amet tempus`
 ];
+
+const data = [
+  {name: `Москва`},
+  {name: `Омск`},
+  {name: `Самара`},
+  {name: `Тула`},
+  {name: `Уфа`},
+  {name: `В.Новгород`},
+];
+
+export const CITIES_DATA = data.map((city) => {
+  return Object.assign(city, {pictures: createPictures(), description: createDescription()});
+});

@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import Smart from './smart';
-import {replace} from '../helpers/utils';
-import {CITIES, mapTypeToOffer} from "../mock/constants";
+import {CITIES, CITIES_DATA, mapTypeToOffer} from "../mock/constants";
 
 // import {OFFERS, CITIES} from '../mock/constants';
 
@@ -11,9 +10,7 @@ const createEditor = ({
   price: eventPtice = 0,
   startTime = ``,
   endTime = ``,
-  offers = [],
-  description = ``,
-  pictures = []
+  offers = []
 }, index, mode = `add`) => {
 
   const map = {
@@ -39,7 +36,13 @@ const createEditor = ({
       </div>`);
   }, ``);
 
-  const picturesMarkup = pictures.reduce((acc, url) => {
+  // const picturesMarkup = CITIES_DATA.reduce((acc, url) => {
+  //   return acc.concat(
+  //       `<img class="event__photo" src="${url}" alt="Event photo">`);
+  // }, ``);
+  const point = CITIES_DATA.find((el) => el.name === destination);
+
+  const picturesMarkup = point.pictures.reduce((acc, url) => {
     return acc.concat(
         `<img class="event__photo" src="${url}" alt="Event photo">`);
   }, ``);
@@ -59,52 +62,52 @@ const createEditor = ({
             <legend class="visually-hidden">Event type</legend>
 
             <div class="event__type-item">
-              <input id="event-type-taxi-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
+              <input id="event-type-taxi-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === `Taxi` && `checked`}>
               <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-${index}">Taxi</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-bus-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
+              <input id="event-type-bus-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === `Bus` && `checked`}>
               <label class="event__type-label  event__type-label--bus" for="event-type-bus-${index}">Bus</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-train-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+              <input id="event-type-train-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `Train` && `checked`}>
               <label class="event__type-label  event__type-label--train" for="event-type-train-${index}">Train</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-ship-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
+              <input id="event-type-ship-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `Ship` && `checked`}>
               <label class="event__type-label  event__type-label--ship" for="event-type-ship-${index}">Ship</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-transport-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
+              <input id="event-type-transport-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === `Transport` && `checked`}>
               <label class="event__type-label  event__type-label--transport" for="event-type-transport-${index}">Transport</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-drive-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
+              <input id="event-type-drive-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === `Drive` && `checked`}>
               <label class="event__type-label  event__type-label--drive" for="event-type-drive-${index}">Drive</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-flight-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+              <input id="event-type-flight-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === `Flight` && `checked`}>
               <label class="event__type-label  event__type-label--flight" for="event-type-flight-${index}">Flight</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-check-in-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
+              <input id="event-type-check-in-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${type === `Check-in` && `checked`}>
               <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-${index}">Check-in</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-sightseeing-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
+              <input id="event-type-sightseeing-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${type === `Sightseeing` && `checked`}>
               <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-${index}">Sightseeing</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-restaurant-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
+              <input id="event-type-restaurant-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${type === `Restaurant` && `checked`}>
               <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-${index}">Restaurant</label>
             </div>
           </fieldset>
@@ -153,8 +156,8 @@ const createEditor = ({
 
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description}</p>
-        ${mode === `add` ? `<div class="event__photos-container">
+        <p class="event__destination-description">${point.description}</p>
+        ${mode === `edit` ? `<div class="event__photos-container">
            <div class="event__photos-tape">${picturesMarkup}</div>
         </div>` : ``}
       </section>
@@ -171,11 +174,12 @@ export default class Editor extends Smart {
     this._clickHandler = this._clickHandler.bind(this);
     this._resetHandler = this._resetHandler.bind(this);
     this._typeHandler = this._typeHandler.bind(this);
-    // this.getTemplate = this.getTemplate.bind(this);
+    this._cityHandler = this._cityHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    console.log(this._data);
     return createEditor(...this._data);
   }
 
@@ -196,7 +200,14 @@ export default class Editor extends Smart {
 
   _typeHandler(e) {
     e.preventDefault();
-    this._callback.type(e);
+
+    this._updateData({type: e.target.value});
+  }
+
+  _cityHandler(e) {
+    e.preventDefault();
+
+    this._updateData({destination: e.target.value});
   }
 
   setClickHandler(cb) {
@@ -217,30 +228,18 @@ export default class Editor extends Smart {
 
   }
 
-  setTypeHandler(cb) {
-    this._callback.type = cb;
 
+  _setInnerHandlers() {
+    // console.log(this._data[1]);
     this.getElement().querySelector(`.event__type-group`).addEventListener(`change`, this._typeHandler);
-
+    this.getElement().querySelector(`#event-destination-${this._data[1]}`).addEventListener(`change`, this._cityHandler);
   }
 
-  updateElement() {
-    const oldEl = this.getElement();
-    super.removeElement();
+  _restoreHandlers() {
+    this._setInnerHandlers();
 
-    const newEl = this.getElement();
-
-    replace(newEl, oldEl);
-
-    this.setTypeHandler(this._callback.type);
+    this.setClickHandler(this._callback.click);
+    this.setSubmitHandler(this._callback.submit);
+    this.setResetHandler(this._callback.reset);
   }
-
-  updateData(update) {
-    if (!update) {
-      return;
-    }
-
-    this._data[0] = Object.assign({}, this._data[0], update);
-  }
-
 }

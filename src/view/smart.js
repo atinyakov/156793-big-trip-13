@@ -3,27 +3,31 @@ import {replace} from '../helpers/utils';
 
 
 export default class Smart extends Abstract {
-  constructor(restoreHandlersCb) {
-    super();
-
-    this.restoreHandlers = restoreHandlersCb;
-  }
-
   restoreHandlers() {
     throw new Error(`You should implement method on instance`);
   }
 
-  updateElement() {
-    const oldEl = super.getElement();
-    super.removeElement();
+  _updateElement() {
+    const oldEl = this.getElement();
+    this.removeElement();
 
-    const newEl = super.getElement();
+    const newEl = this.getElement();
 
     replace(newEl, oldEl);
+
+    // как это работает???
+    this._restoreHandlers();
   }
 
-  updateData() {
 
+  _updateData(update) {
+    if (!update) {
+      return;
+    }
+    // как это работает???
+    this._data[0] = Object.assign({}, this._data[0], update);
+
+    this._updateElement();
   }
 
 }
