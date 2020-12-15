@@ -230,12 +230,11 @@ export default class Editor extends Smart {
 
 
   _setInnerHandlers() {
-    // console.log(this._data[1]);
     this.getElement().querySelector(`.event__type-group`).addEventListener(`change`, this._typeHandler);
-    this.getElement().querySelector(`#event-destination-${this._data[1]}`).addEventListener(`change`, this._cityHandler);
+    this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityHandler);
   }
 
-  _restoreHandlers() {
+  restoreHandlers() {
     this._setInnerHandlers();
 
     this.setClickHandler(this._callback.click);
