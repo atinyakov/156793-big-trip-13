@@ -49,15 +49,4 @@ export const replace = (newChild, oldChild) => {
   const parent = oldChild.parentElement;
 
   parent.replaceChild(newChild, oldChild);
-  // console.log(`replaced`);
-};
-
-export const updateItem = (items, update) => {
-  const idx = items.findIndex((el) => el.id === update.id);
-  if (idx === -1) {
-    return items;
-  }
-
-  return [...items.slice(0, idx), update, ...items.slice(idx + 1)];
-
 };

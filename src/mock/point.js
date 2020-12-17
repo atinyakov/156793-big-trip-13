@@ -21,7 +21,7 @@ const createPointData = () => {
         `YYYY-MM-DD H:m`
     ).toDate(),
     price: getRandomInteger(1, 10) * 10,
-    offers: mapTypeToOffer.get(POINT_TYPE[pointPosition]),
+    offers: mapTypeToOffer.get(POINT_TYPE[pointPosition]), // id[]
     isFavorite: !!getRandomInteger(0, 1),
   };
 };

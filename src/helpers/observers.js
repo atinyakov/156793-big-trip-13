@@ -11,18 +11,11 @@ export default class Observers {
     this._observers = this._observers.filter((observer) => observer === item);
   }
 
-  update(data, index) {
-    this._observers = this._observers.map((observer) => {
-
-      if (observer.getPointData().id === data.id) {
-        observer.init(data, index);
-      }
-
-      return observer;
-    });
-  }
-
   run(method) {
+    if (typeof method === `function`) {
+      this._observers.forEach((observer) => method(observer));
+      return;
+    }
     this._observers.forEach((observer) => observer[method]());
   }
 }

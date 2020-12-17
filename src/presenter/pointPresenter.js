@@ -1,5 +1,7 @@
 import Point from "../view/point";
 import Editor from "../view/editor";
+
+
 import {render, RenderPosition, replace} from '../helpers/utils';
 
 const Mode = {
@@ -18,15 +20,14 @@ export default class PointPresenter {
     this.getPointData = this.getPointData.bind(this);
   }
 
-  init(point, index) {
+  init(point) {
     this._point = point;
-    this._pointIdx = index;
 
     const oldPoint = this._pointComponent;
     const oldEditor = this._pointEditorComponent;
 
     this._pointComponent = new Point(point);
-    this._pointEditorComponent = new Editor(point, index, `edit`);
+    this._pointEditorComponent = new Editor(point, `edit`);
 
     this._pointComponent.setRollupHandler(() => {
       document.addEventListener(`keydown`, this._closeEditorByEsc);
@@ -37,7 +38,7 @@ export default class PointPresenter {
     });
 
     this._pointComponent.setFavoriteHandler(() => {
-      this._changeData(Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}), this._pointIdx);
+      this._changeData(Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}));
     });
 
     this._pointEditorComponent.setClickHandler(this._closeEditor);
@@ -79,5 +80,9 @@ export default class PointPresenter {
 
   getPointData() {
     return this._point;
+  }
+
+  destroy() {
+    this._pointComponent.getElement().remove();
   }
 }

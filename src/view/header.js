@@ -30,9 +30,9 @@ const createHeader = (points) => {
 };
 
 export default class Header extends Abstract {
-  constructor(data = []) {
+  constructor(pointsModel, filterModel) {
     super();
-    this._data = data;
+    this._data = pointsModel.getPoints(filterModel.getFilter());
   }
 
   getTemplate() {

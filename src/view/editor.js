@@ -11,7 +11,7 @@ const createEditor = ({
   startTime = ``,
   endTime = ``,
   offers = []
-}, index, mode = `add`) => {
+}, mode = `add`) => {
 
   const map = {
     [`Add luggage`]: `luggage`,
@@ -27,8 +27,8 @@ const createEditor = ({
   const offersMarkup = mapTypeToOffer.get(derivedType(type)).reduce((acc, {title, price}) => {
     return acc.concat(
         `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${map[title]}-${index}" type="checkbox" name="event-offer-${map[title]}" ${offers.findIndex((offer) => offer.title === title) !== -1 && `checked`}>
-        <label class="event__offer-label" for="event-offer-${map[title]}-${index}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${map[title]}" type="checkbox" name="event-offer-${map[title]}" ${offers.findIndex((offer) => offer.title === title) !== -1 && `checked`}>
+        <label class="event__offer-label" for="event-offer-${map[title]}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${price}</span>
@@ -51,93 +51,93 @@ const createEditor = ({
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
-        <label class="event__type  event__type-btn" for="event-type-toggle-${index}">
+        <label class="event__type  event__type-btn" for="event-type-toggle">
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${index}" type="checkbox">
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">
 
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
 
             <div class="event__type-item">
-              <input id="event-type-taxi-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === `Taxi` && `checked`}>
-              <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-${index}">Taxi</label>
+              <input id="event-type-taxi" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === `Taxi` && `checked`}>
+              <label class="event__type-label  event__type-label--taxi" for="event-type-taxi">Taxi</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-bus-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === `Bus` && `checked`}>
-              <label class="event__type-label  event__type-label--bus" for="event-type-bus-${index}">Bus</label>
+              <input id="event-type-bus" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === `Bus` && `checked`}>
+              <label class="event__type-label  event__type-label--bus" for="event-type-bus">Bus</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-train-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `Train` && `checked`}>
-              <label class="event__type-label  event__type-label--train" for="event-type-train-${index}">Train</label>
+              <input id="event-type-train" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `Train` && `checked`}>
+              <label class="event__type-label  event__type-label--train" for="event-type-train">Train</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-ship-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `Ship` && `checked`}>
-              <label class="event__type-label  event__type-label--ship" for="event-type-ship-${index}">Ship</label>
+              <input id="event-type-ship" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `Ship` && `checked`}>
+              <label class="event__type-label  event__type-label--ship" for="event-type-ship">Ship</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-transport-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === `Transport` && `checked`}>
-              <label class="event__type-label  event__type-label--transport" for="event-type-transport-${index}">Transport</label>
+              <input id="event-type-transport" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === `Transport` && `checked`}>
+              <label class="event__type-label  event__type-label--transport" for="event-type-transport">Transport</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-drive-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === `Drive` && `checked`}>
-              <label class="event__type-label  event__type-label--drive" for="event-type-drive-${index}">Drive</label>
+              <input id="event-type-drive" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === `Drive` && `checked`}>
+              <label class="event__type-label  event__type-label--drive" for="event-type-drive">Drive</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-flight-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === `Flight` && `checked`}>
-              <label class="event__type-label  event__type-label--flight" for="event-type-flight-${index}">Flight</label>
+              <input id="event-type-flight" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === `Flight` && `checked`}>
+              <label class="event__type-label  event__type-label--flight" for="event-type-flight">Flight</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-check-in-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${type === `Check-in` && `checked`}>
-              <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-${index}">Check-in</label>
+              <input id="event-type-check-in" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${type === `Check-in` && `checked`}>
+              <label class="event__type-label  event__type-label--check-in" for="event-type-check-in">Check-in</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-sightseeing-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${type === `Sightseeing` && `checked`}>
-              <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-${index}">Sightseeing</label>
+              <input id="event-type-sightseeing" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${type === `Sightseeing` && `checked`}>
+              <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing">Sightseeing</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-restaurant-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${type === `Restaurant` && `checked`}>
-              <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-${index}">Restaurant</label>
+              <input id="event-type-restaurant" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${type === `Restaurant` && `checked`}>
+              <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant">Restaurant</label>
             </div>
           </fieldset>
         </div>
       </div>
 
       <div class="event__field-group  event__field-group--destination">
-        <label class="event__label  event__type-output" for="event-destination-${index}">
+        <label class="event__label  event__type-output" for="event-destination">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-${index}" type="text" name="event-destination" value="${destination}" list="destination-list-${index}">
-        <datalist id="destination-list-${index}">
+        <input class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination}" list="destination-list">
+        <datalist id="destination-list">
           ${CITIES.reduce((acc, city) => acc + `<option value=${city}>${city}</option>`, ``)}
         </datalist>
       </div>
 
       <div class="event__field-group  event__field-group--time">
-        <label class="visually-hidden" for="event-start-time-${index}">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-${index}" type="text" name="event-start-time" value="${dayjs(startTime).format(`DD/MM/YY HH:mm`)}">
+        <label class="visually-hidden" for="event-start-time">From</label>
+        <input class="event__input  event__input--time" id="event-start-time" type="text" name="event-start-time" value="${dayjs(startTime).format(`DD/MM/YY HH:mm`)}">
         &mdash;
-        <label class="visually-hidden" for="event-end-time-${index}">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-${index}" type="text" name="event-end-time" value="${dayjs(endTime).format(`DD/MM/YY HH:mm`)}">
+        <label class="visually-hidden" for="event-end-time">To</label>
+        <input class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" value="${dayjs(endTime).format(`DD/MM/YY HH:mm`)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
-        <label class="event__label" for="event-price-${index}">
+        <label class="event__label" for="event-price">
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${index}" type="text" name="event-price" value="${eventPtice}">
+        <input class="event__input  event__input--price" id="event-price" type="text" name="event-price" value="${eventPtice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -167,9 +167,10 @@ const createEditor = ({
 };
 
 export default class Editor extends Smart {
-  constructor(...data) {
+  constructor(data, mode) {
     super();
     this._data = data;
+    this._mode = mode;
     this._callback = {};
     this._clickHandler = this._clickHandler.bind(this);
     this._resetHandler = this._resetHandler.bind(this);
@@ -180,7 +181,7 @@ export default class Editor extends Smart {
   }
 
   getTemplate() {
-    return createEditor(...this._data);
+    return createEditor(this._data, this._mode);
   }
 
   _clickHandler(e) {
@@ -225,9 +226,7 @@ export default class Editor extends Smart {
     this._callback.reset = cb;
 
     this.getElement().querySelector(`form`).addEventListener(`reset`, this._resetHandler);
-
   }
-
 
   _setInnerHandlers() {
     this.getElement().querySelector(`.event__type-group`).addEventListener(`change`, this._typeHandler);

@@ -96,3 +96,15 @@ const data = [
 export const CITIES_DATA = data.map((city) => {
   return Object.assign(city, {pictures: createPictures(), description: createDescription()});
 });
+
+export const FILTER_TYPE = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`,
+};
+
+export const SORT_TYPE = {
+  DAY: `everything`,
+  TYPE: `future`,
+  PRICE: `past`,
+};

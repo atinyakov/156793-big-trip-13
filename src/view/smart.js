@@ -15,18 +15,21 @@ export default class Smart extends Abstract {
 
     replace(newEl, oldEl);
 
-    // В реализации этот метод перекрывается, и уже вызывается он а не тот абстрактный который тут есть
+
     this.restoreHandlers();
   }
 
 
-  _updateData(update) {
+  _updateData(update, justData = false) {
     if (!update) {
       return;
     }
-    // Зачем ты так плодишь аргументы? А так просто берет первый элемент и обновляет его через слияние в пустой объект по первому уровню, почитай что делает Object.assign
-    this._data[0] = Object.assign({}, this._data[0], update);
 
+    this._data = Object.assign({}, this._data, update);
+
+    if (justData) {
+      return;
+    }
     this._updateElement();
   }
 
