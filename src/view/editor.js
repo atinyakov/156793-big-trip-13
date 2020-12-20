@@ -22,6 +22,7 @@ const createEditor = ({
     [`Order Uber`]: `uber`,
   };
 
+
   const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
 
   const offersMarkup = mapTypeToOffer.get(derivedType(type)).reduce((acc, {title, price}) => {
@@ -38,7 +39,7 @@ const createEditor = ({
 
   const point = CITIES_DATA.find((el) => el.name === destination);
 
-  const picturesMarkup = point.pictures.reduce((acc, url) => {
+  const picturesMarkup = point !== undefined && point.pictures.reduce((acc, url) => {
     return acc.concat(
         `<img class="event__photo" src="${url}" alt="Event photo">`);
   }, ``);
@@ -67,10 +68,10 @@ const createEditor = ({
               <label class="event__type-label  event__type-label--bus" for="event-type-bus">Bus</label>
             </div>
 
-            <div class="event__type-item">
+            <dilasv cs="event__type-item">
               <input id="event-type-train" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `Train` && `checked`}>
               <label class="event__type-label  event__type-label--train" for="event-type-train">Train</label>
-            </div>
+            </dilasv>
 
             <div class="event__type-item">
               <input id="event-type-ship" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `Ship` && `checked`}>
@@ -114,7 +115,7 @@ const createEditor = ({
         <label class="event__label  event__type-output" for="event-destination">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination}" list="destination-list">
+        <input pattern="${CITIES_DATA.map((el) => el.name).join(`|`)}" class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination}" list="destination-list">
         <datalist id="destination-list">
           ${CITIES.reduce((acc, city) => acc + `<option value=${city}>${city}</option>`, ``)}
         </datalist>
@@ -133,7 +134,7 @@ const createEditor = ({
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price" type="text" name="event-price" value="${eventPtice}">
+        <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${eventPtice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -152,8 +153,8 @@ const createEditor = ({
 
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${point.description}</p>
-        ${mode === MODE.EDITING ? `<div class="event__photos-container">
+        ${point !== undefined ? `<p class="event__destination-description">${point.description}</p>` : ``}
+        ${mode === MODE.EDITING && point !== undefined ? `<div class="event__photos-container">
            <div class="event__photos-tape">${ picturesMarkup}</div>
         </div>` : ``}
       </section>
