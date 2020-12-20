@@ -11,11 +11,19 @@ export default class Observers {
     this._observers = this._observers.filter((observer) => observer === item);
   }
 
+  clear() {
+    this._observers = [];
+  }
+
   run(method) {
     if (typeof method === `function`) {
       this._observers.forEach((observer) => method(observer));
       return;
     }
     this._observers.forEach((observer) => observer[method]());
+  }
+
+  notify(...args) {
+    this._observers.forEach((observer) => observer(...args));
   }
 }

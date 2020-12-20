@@ -5,6 +5,7 @@ import Menu from "./view/menu";
 import Header from "./view/header";
 import TripPresenter from './presenter/tripPresenter';
 import {points} from "./mock/point";
+import {nanoid} from 'nanoid';
 
 
 const tripMain = document.querySelector(`.trip-main`);
@@ -21,3 +22,8 @@ render(tripControls, new Menu(), RenderPosition.AFTERBEGIN);
 
 const trip = new TripPresenter(tripSorting, pointsModel, filterModel);
 trip.init();
+
+const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
+addEventBtn.addEventListener(`click`, () => {
+  pointsModel.addPoint({id: nanoid(10)});
+});

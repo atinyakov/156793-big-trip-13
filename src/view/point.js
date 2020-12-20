@@ -14,18 +14,18 @@ const duration = (start, end) => {
 const createTemplate = ({
   type = `train`,
   destination = `Moscow`,
-  price: eventPtice,
-  isFavorite = `false`,
-  startTime,
+  price: eventPtice = 0,
+  isFavorite = false,
+  startTime = dayjs(),
   endTime,
-  offers,
+  offers = [],
 } = {}) => {
   const favoriteClasslist = `event__favorite-btn ${isFavorite && `event__favorite-btn--active`}`;
 
 
   return `<li class="trip-events__item">
   <div class="event">
-    <time class="event__date" datetime="datetime="${startTime}">${dayjs(startTime).format(`MMM D`)}</time>
+    <time class="event__date" datetime="${startTime}">${dayjs(startTime).format(`MMM D`)}</time>
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
     </div>

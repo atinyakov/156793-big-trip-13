@@ -1,16 +1,16 @@
 import dayjs from "dayjs";
 import Smart from './smart';
-import {CITIES, CITIES_DATA, mapTypeToOffer} from "../mock/constants";
+import {CITIES, CITIES_DATA, mapTypeToOffer, MODE} from "../mock/constants";
 
 // import {OFFERS, CITIES} from '../mock/constants';
 
 const createEditor = ({
   type = `train`,
-  destination = `Moscow`,
+  destination = `Москва`,
   price: eventPtice = 0,
-  startTime = ``,
-  endTime = ``,
-  offers = []
+  startTime = dayjs(),
+  endTime = dayjs(),
+  offers = [],
 }, mode = `add`) => {
 
   const map = {
@@ -36,10 +36,6 @@ const createEditor = ({
       </div>`);
   }, ``);
 
-  // const picturesMarkup = CITIES_DATA.reduce((acc, url) => {
-  //   return acc.concat(
-  //       `<img class="event__photo" src="${url}" alt="Event photo">`);
-  // }, ``);
   const point = CITIES_DATA.find((el) => el.name === destination);
 
   const picturesMarkup = point.pictures.reduce((acc, url) => {
@@ -157,8 +153,8 @@ const createEditor = ({
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${point.description}</p>
-        ${mode === `edit` ? `<div class="event__photos-container">
-           <div class="event__photos-tape">${picturesMarkup}</div>
+        ${mode === MODE.EDITING ? `<div class="event__photos-container">
+           <div class="event__photos-tape">${ picturesMarkup}</div>
         </div>` : ``}
       </section>
     </section>
@@ -173,7 +169,7 @@ export default class Editor extends Smart {
     this._mode = mode;
     this._callback = {};
     this._clickHandler = this._clickHandler.bind(this);
-    this._resetHandler = this._resetHandler.bind(this);
+    this._deleteHandler = this._deleteHandler.bind(this);
     this._typeHandler = this._typeHandler.bind(this);
     this._cityHandler = this._cityHandler.bind(this);
 
@@ -189,14 +185,16 @@ export default class Editor extends Smart {
     this._callback.click();
   }
 
-  _submitHandler(e) {
+  _submitHandler(e, data) {
     e.preventDefault();
-    this._callback.submit();
+    this._callback.submit(data);
   }
 
-  _resetHandler(e) {
+  _deleteHandler(e) {
     e.preventDefault();
-    this._callback.reset();
+    this._callback.delete(this._data);
+
+    // this._element.getElement().remove();
   }
 
   _typeHandler(e) {
@@ -219,13 +217,31 @@ export default class Editor extends Smart {
   setSubmitHandler(cb) {
     this._callback.submit = cb;
 
-    this.getElement().querySelector(`form`).addEventListener(`submit`, (e) => this._submitHandler(e));
+    const form = this.getElement().querySelector(`form`);
+
+    // let formData;
+
+    form.addEventListener(`submit`, (e) => {
+      e.preventDefault();
+
+      // formData = new FormData(form);
+    });
+
+    form.addEventListener(`formdata`, (e) => {
+
+      let update = {};
+      for (let [key, value] of e.formData.entries()) {
+        update = Object.assign(update, {[key]: value});
+      }
+
+      this._submitHandler(e, Object.assign(this._data, update));
+    });
   }
 
-  setResetHandler(cb) {
-    this._callback.reset = cb;
+  setDeleteHandler(cb) {
+    this._callback.delete = cb;
 
-    this.getElement().querySelector(`form`).addEventListener(`reset`, this._resetHandler);
+    this.getElement().querySelector(`form`).addEventListener(`reset`, this._deleteHandler);
   }
 
   _setInnerHandlers() {
@@ -238,6 +254,6 @@ export default class Editor extends Smart {
 
     this.setClickHandler(this._callback.click);
     this.setSubmitHandler(this._callback.submit);
-    this.setResetHandler(this._callback.reset);
+    this.setDeleteHandler(this._callback.delete);
   }
 }
