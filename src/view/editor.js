@@ -2,12 +2,10 @@ import dayjs from "dayjs";
 import Smart from './smart';
 import {CITIES, CITIES_DATA, mapTypeToOffer, MODE} from "../mock/constants";
 
-// import {OFFERS, CITIES} from '../mock/constants';
-
 const createEditor = ({
   type = `train`,
   destination = `Москва`,
-  price: eventPtice = 0,
+  price: eventPrice = 0,
   startTime = dayjs(),
   endTime = dayjs(),
   offers = [],
@@ -44,6 +42,17 @@ const createEditor = ({
         `<img class="event__photo" src="${url}" alt="Event photo">`);
   }, ``);
 
+  const typesData = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
+  const types = typesData.reduce((acc, data) => {
+    return acc.concat(
+        `<div class="event__type-item">
+        <input id="event-type-${data}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${data}" ${type === derivedType(data)
+           && `checked`}>
+        <label class="event__type-label  event__type-label--${data}" for="event-type-${data}">${derivedType(data)}</label>
+      </div>`
+    );
+  }, ``);
+
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -57,56 +66,7 @@ const createEditor = ({
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-
-            <div class="event__type-item">
-              <input id="event-type-taxi" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === `Taxi` && `checked`}>
-              <label class="event__type-label  event__type-label--taxi" for="event-type-taxi">Taxi</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-bus" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === `Bus` && `checked`}>
-              <label class="event__type-label  event__type-label--bus" for="event-type-bus">Bus</label>
-            </div>
-
-            <dilasv cs="event__type-item">
-              <input id="event-type-train" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `Train` && `checked`}>
-              <label class="event__type-label  event__type-label--train" for="event-type-train">Train</label>
-            </dilasv>
-
-            <div class="event__type-item">
-              <input id="event-type-ship" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `Ship` && `checked`}>
-              <label class="event__type-label  event__type-label--ship" for="event-type-ship">Ship</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-transport" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === `Transport` && `checked`}>
-              <label class="event__type-label  event__type-label--transport" for="event-type-transport">Transport</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-drive" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === `Drive` && `checked`}>
-              <label class="event__type-label  event__type-label--drive" for="event-type-drive">Drive</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-flight" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === `Flight` && `checked`}>
-              <label class="event__type-label  event__type-label--flight" for="event-type-flight">Flight</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-check-in" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${type === `Check-in` && `checked`}>
-              <label class="event__type-label  event__type-label--check-in" for="event-type-check-in">Check-in</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-sightseeing" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${type === `Sightseeing` && `checked`}>
-              <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing">Sightseeing</label>
-            </div>
-
-            <div class="event__type-item">
-              <input id="event-type-restaurant" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${type === `Restaurant` && `checked`}>
-              <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant">Restaurant</label>
-            </div>
+            ${types}
           </fieldset>
         </div>
       </div>
@@ -134,7 +94,7 @@ const createEditor = ({
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${eventPtice}">
+        <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${eventPrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -220,18 +180,13 @@ export default class Editor extends Smart {
 
     const form = this.getElement().querySelector(`form`);
 
-    // let formData;
-
     form.addEventListener(`submit`, (e) => {
       e.preventDefault();
 
-      // formData = new FormData(form);
-    });
-
-    form.addEventListener(`formdata`, (e) => {
-
+      const formData = new FormData(form);
       let update = {};
-      for (let [key, value] of e.formData.entries()) {
+
+      for (let [key, value] of formData.entries()) {
         update = Object.assign(update, {[key]: value});
       }
 

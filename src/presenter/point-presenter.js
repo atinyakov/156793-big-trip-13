@@ -30,10 +30,10 @@ export default class PointPresenter {
     this._pointEditorComponent = new Editor(point, mode);
 
     this._pointComponent.setRollupHandler(() => {
-      document.addEventListener(`keydown`, this._closeEditorByEsc);
       this._resetPoints();
 
       replace(this._pointEditorComponent, this._pointComponent);
+      document.addEventListener(`keydown`, this._closeEditorByEsc);
       this._mode = MODE.EDITING;
     });
 
@@ -60,7 +60,7 @@ export default class PointPresenter {
     this._pointEditorComponent.setDeleteHandler(() => {
       this._pointsModel.deletePoint(this._point);
 
-      this.destroy();
+      // this.destroy();
     });
 
 
@@ -85,6 +85,8 @@ export default class PointPresenter {
     if (this._mode === MODE.DEFAULT) {
       replace(this._pointComponent, oldPoint);
     }
+
+
   }
 
   _closeEditor() {
@@ -95,12 +97,7 @@ export default class PointPresenter {
   }
 
   _closeEditorByEsc(e) {
-    if (e.key === `Escape` || e.key === `Esc`) {
-      if (this._mode === MODE.ADD) {
-        this._pointsModel.deletePoint(this._point);
-
-        return;
-      }
+    if ((e.key === `Escape` || e.key === `Esc`) && this._mode !== MODE.DEFAULT) {
       this._closeEditor();
     }
   }
@@ -118,8 +115,9 @@ export default class PointPresenter {
   destroy() {
     this._pointComponent.getElement().remove();
     this._pointEditorComponent.getElement().remove();
-    this._pointComponent.removeElement(); // ?
-    // this._pointComponent = {}; // ?
+    this._pointComponent.removeElement();
+    // this._pointComponent = null;
     this._pointEditorComponent.removeElement(); // ?
+    // this._pointEditorComponent = null;
   }
 }

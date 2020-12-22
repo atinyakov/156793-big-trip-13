@@ -1,8 +1,8 @@
 
 import Empty from "../view/empty";
 import Sorting from "../view/sorting";
-import PointPresenter from './pointPresenter';
-import FilterPresenter from './filterPresenter';
+import PointPresenter from './point-presenter';
+import FilterPresenter from './filter-presenter';
 
 import {SORT_TYPE, UPDATE_TYPE} from '../mock/constants';
 
@@ -36,7 +36,6 @@ export default class TripPresenter {
   }
 
   _renderSorting() {
-    // console.log(this._sorting.getElement().querySelector(`.trip-events__trip-sort`));
     this._sorting = new Sorting();
 
     render(this._container, this._sorting, RenderPosition.AFTERBEGIN);
@@ -78,6 +77,7 @@ export default class TripPresenter {
       case UPDATE_TYPE.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
         // this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        this._resetPoints();
         this._clearTrip();
         this._renderTrip();
         break;

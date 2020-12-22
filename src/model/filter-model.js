@@ -12,6 +12,4 @@ export default class FilterModel {
   getFilter() {
     return this._filter;
   }
-
-
 }

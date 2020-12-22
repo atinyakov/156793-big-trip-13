@@ -1,9 +1,9 @@
 import {render, RenderPosition} from './helpers/utils';
-import PointsModel from './model/pointsModel';
-import FilterModel from './model/filterModel';
+import PointsModel from './model/points-model';
+import FilterModel from './model/filter-model';
 import Menu from "./view/menu";
 import Header from "./view/header";
-import TripPresenter from './presenter/tripPresenter';
+import TripPresenter from './presenter/trip-presenter';
 import {points} from "./mock/point";
 import {nanoid} from 'nanoid';
 
