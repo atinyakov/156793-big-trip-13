@@ -28,7 +28,4 @@ const createPointData = () => {
 
 export const points = Array(20)
   .fill()
-  .map(() => createPointData())
-  .sort((a, b) => {
-    return dayjs(a.startTime).diff(b.startTime, `m`) < 0 ? -1 : 1;
-  });
+  .map(() => createPointData());

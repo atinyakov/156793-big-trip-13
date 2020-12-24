@@ -104,9 +104,9 @@ export const FILTER_TYPE = {
 };
 
 export const SORT_TYPE = {
-  DAY: `day`,
-  TYPE: `type`,
-  PRICE: `price`,
+  DAY: `sort-day`,
+  TYPE: `sort-type`,
+  PRICE: `sort-price`,
 };
 
 export const USER_ACTION = {

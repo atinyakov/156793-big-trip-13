@@ -1,34 +1,34 @@
 import Sorting from '../view/sorting';
 import {render, RenderPosition} from '../helpers/utils';
-
+import {SORT_TYPE} from '../mock/constants';
 
 export default class SortingPresenter {
-  constructor(container, pointsModel, filterModel) {
+  constructor(container) {
     this._container = container;
-    this._pointsModel = pointsModel;
-    this._filterModel = filterModel;
-
-    // this._updateFilter = this._updateFilter.bind(this);
+    this.currentValue = SORT_TYPE.DAY;
   }
 
   init() {
     this._component = new Sorting();
 
     this.render();
+    this._component.setHandler((data) => this.setCurrentValue(data));
   }
 
   setHandler(cb) {
-    this._component.setFilterHandler((data) => {
-      this._updateFilter(data);
-      cb();
-    });
+    this._cb = cb;
   }
 
-  _update(data) {
-    this._filterModel.setFilter(data);
+  getCurrentValue() {
+    return this.currentValue;
+  }
+
+  setCurrentValue(data) {
+    this.currentValue = data;
+    this._cb();
   }
 
   render() {
-    render(this._container, this._component, RenderPosition.BEFOREEND);
+    render(this._container, this._component, RenderPosition.AFTERBEGIN);
   }
 }

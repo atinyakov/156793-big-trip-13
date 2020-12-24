@@ -1,14 +1,16 @@
 
 import Empty from "../view/empty";
-import Sorting from "../view/sorting";
+// import Sorting from "../view/sorting";
 import PointPresenter from './point-presenter';
 import FilterPresenter from './filter-presenter';
-
+import SortingPresenter from './sort-presenter';
 import {SORT_TYPE, UPDATE_TYPE} from '../mock/constants';
 
 import {render, RenderPosition} from '../helpers/utils';
 import Observers from '../helpers/observers';
 import {nanoid} from 'nanoid';
+import dayjs from "dayjs";
+
 
 export default class TripPresenter {
   constructor(target, pointsModel, filterModel) {
@@ -27,7 +29,7 @@ export default class TripPresenter {
   init() {
     const tripControls = document.querySelector(`.trip-controls`);
     this._renderFilters(tripControls);
-    this._renderSorting();
+    this._renderSorting(this._container);
     this._renderTrip();
   }
 
@@ -35,10 +37,14 @@ export default class TripPresenter {
     render(this._container, this._empty, RenderPosition.BEFOREEND);
   }
 
-  _renderSorting() {
-    this._sorting = new Sorting();
+  _renderSorting(target) {
+    this._sorting = new SortingPresenter(target);
+    this._sorting.init();
 
-    render(this._container, this._sorting, RenderPosition.AFTERBEGIN);
+    this._sorting.setHandler(() => {
+      this._clearTrip();
+      this._renderTrip();
+    });
   }
 
   initNewPoint() {
@@ -101,6 +107,26 @@ export default class TripPresenter {
 
   _renderTrip() {
     this._points = this._pointsModel.getPoints(this._filterModel.getFilter());
+
+    const filter = this._sorting.getCurrentValue();
+
+    switch (filter) {
+      case SORT_TYPE.DAY:
+        this._points = this._points.sort((a, b) => {
+          return dayjs(a.startTime).diff(b.startTime, `m`) < 0 ? -1 : 1;
+        });
+        break;
+      case SORT_TYPE.TIME:
+        this._points = this._points.sort((a, b) => {
+          return dayjs(a.startTime).diff(a.endTime, `m`) - dayjs(b.startTime).diff(b.endTime, `m`) < 0 ? -1 : 1;
+        });
+        break;
+      case SORT_TYPE.PRICE:
+        this._points = this._points.sort((a, b) => {
+          return a.price - b.price < 0 ? -1 : 1;
+        });
+        break;
+    }
 
     if (this._points === undefined || !this._points.length) {
       this._renderEmpty();

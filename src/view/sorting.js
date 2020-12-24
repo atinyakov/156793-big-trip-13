@@ -31,19 +31,32 @@ export const createSorting = () => {
 
 
 export default class Sorting extends Abstract {
-  constructor() {
-    super();
-    this._setInnerHandlers();
-  }
+  // constructor() {
+  //   super();
+  // this.handl = this.handl.bind(this);
+  // this._setInnerHandlers();
+  // }
 
   getTemplate() {
     return createSorting();
   }
 
-  _setInnerHandlers() {
-    // this.getElement().querySelector(`.trip-events__trip-sort`).addEventListener(`change`, (e) =>
-    //   console.log(e.target.value));
-    // const el = this.getElement();
-    // console.log(el.querySelector(`form`));
+  // handl(e) {
+  //   console.log(e.target.value);
+  // }
+
+  // _setInnerHandlers() {
+  //   // this.getElement().querySelector(`.trip-events__trip-sort`).addEventListener(`change`, this.handl);
+  //   console.log(this.getElement());
+  // }
+
+  setHandler(cb) {
+    this._cb = cb;
+
+    this.getElement().addEventListener(`change`, (e) => {
+      e.preventDefault();
+      this._cb(e.target.value);
+    });
   }
+
 }
