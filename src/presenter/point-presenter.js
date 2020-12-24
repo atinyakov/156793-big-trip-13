@@ -92,6 +92,12 @@ export default class PointPresenter {
   _closeEditor() {
     document.removeEventListener(`keydown`, this.closeEditorByEsc);
 
+    if (this._mode === MODE.ADD) {
+      // this.destroy();
+      this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, this._point);
+      return;
+    }
+
     replace(this._pointComponent, this._pointEditorComponent);
     this._mode = MODE.DEFAULT;
   }

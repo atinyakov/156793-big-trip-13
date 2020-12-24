@@ -8,6 +8,7 @@ import {SORT_TYPE, UPDATE_TYPE} from '../mock/constants';
 
 import {render, RenderPosition} from '../helpers/utils';
 import Observers from '../helpers/observers';
+import {nanoid} from 'nanoid';
 
 export default class TripPresenter {
   constructor(target, pointsModel, filterModel) {
@@ -27,7 +28,6 @@ export default class TripPresenter {
     const tripControls = document.querySelector(`.trip-controls`);
     this._renderFilters(tripControls);
     this._renderSorting();
-
     this._renderTrip();
   }
 
@@ -41,18 +41,17 @@ export default class TripPresenter {
     render(this._container, this._sorting, RenderPosition.AFTERBEGIN);
   }
 
-  // _updatePoint(update) {
-  //   this._points = this._pointsModel.updatePoint(update);
+  initNewPoint() {
+    if (this._newPoint !== undefined) {
+      return;
+    }
 
-  // this._pointObserver.run((el) => {
-  //   if (el.getPointData().id === update.id) {
-  //     el.init(update);
-  //   }
-  // });
-  // }
+    this._newPoint = new PointPresenter(this._newPointContainer, this._pointsModel, this.resetPoints);
+    this._newPoint.init({id: nanoid(10)});
+    this._pointObserver.subscribe(this._newPoint);
+  }
 
   _renderPoint(container, point) {
-    // const pointPresenter = new PointPresenter(container, this._updatePoint, this.resetPoints);
     const pointPresenter = new PointPresenter(container, this._pointsModel, this.resetPoints);
     pointPresenter.init(point);
     this._pointObserver.subscribe(pointPresenter);
@@ -92,7 +91,6 @@ export default class TripPresenter {
       this._clearTrip();
       this._renderTrip();
     });
-
   }
 
   _renderPoints(container) {
@@ -113,6 +111,7 @@ export default class TripPresenter {
     pointList.classList.add(`trip-events__list`);
 
     this._container.appendChild(pointList);
+    this._newPointContainer = pointList;
 
     this._renderPoints(pointList);
   }
@@ -125,6 +124,7 @@ export default class TripPresenter {
     this._pointObserver.run((el) => {
       el.destroy();
     });
+    this._newPoint = undefined;
 
     this._empty.getElement().remove();
 
