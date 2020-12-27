@@ -27,48 +27,63 @@ const createDescription = () => Array(getRandomInteger(1, 4)).fill().reduce((acc
 }, ``);
 
 const createPictures = () => Array(getRandomInteger(1, 5))
-.fill()
-.map(() => `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`);
+  .fill()
+  .map(() => `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`);
 
 
 export const OFFERS = [
   {
+    id: 0,
     title: `Add luggage`,
-    price: 30
+    price: 30,
+    name: `luggage`
   },
   {
+    id: 1,
     title: `Switch to comfort class`,
     price: 100,
+    name: `comfort`
+
   },
   {
+    id: 2,
     title: `Add meal`,
-    price: 15
+    price: 15,
+    name: `meal`
+
   },
   {
+    id: 3,
     title: `Choose seats`,
-    price: 5
+    price: 5,
+    name: `seats`
+
   },
   {
+    id: 4,
     title: `Travel by train`,
     price: 40,
+    name: `train`
   },
   {
+    id: 5,
     title: `Order Uber`,
     price: 20,
+    name: `uber`
   }
 ];
 
 export const mapTypeToOffer = new Map([
-  [POINT_TYPE[0], [OFFERS[5]]],
-  [POINT_TYPE[2], [OFFERS[2]]],
-  [POINT_TYPE[1], [OFFERS[4], OFFERS[2]]],
-  [POINT_TYPE[3], [OFFERS[4], OFFERS[5]]],
-  [POINT_TYPE[4], [OFFERS[1]]],
-  [POINT_TYPE[5], [OFFERS[0], OFFERS[3]]],
-  [POINT_TYPE[6], [OFFERS[1]]],
-  [POINT_TYPE[7], [OFFERS[2]]],
-  [POINT_TYPE[8], [OFFERS[2]]],
-  [POINT_TYPE[9], [OFFERS[0]]],
+  [POINT_TYPE[0], [5]],
+  [POINT_TYPE[2], [2]],
+  [POINT_TYPE[1], [2, 4]],
+  [POINT_TYPE[3], [4, 5]],
+  [POINT_TYPE[4], [1]],
+  [POINT_TYPE[5], [0, 3]],
+  [POINT_TYPE[6], [1]],
+  [POINT_TYPE[7], [2]],
+  [POINT_TYPE[8], [2]],
+  [POINT_TYPE[9], [0]]
 ]);
 
 export const SENTENCES = [

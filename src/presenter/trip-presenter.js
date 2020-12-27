@@ -52,6 +52,7 @@ export default class TripPresenter {
       return;
     }
 
+    this. _resetPoints();
     this._newPoint = new PointPresenter(this._newPointContainer, this._pointsModel, this.resetPoints);
     this._newPoint.init({id: nanoid(10)});
     this._pointObserver.subscribe(this._newPoint);

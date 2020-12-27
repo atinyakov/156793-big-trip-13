@@ -43,24 +43,12 @@ export default class PointPresenter {
 
     this._pointEditorComponent.setClickHandler(this._closeEditor);
     this._pointEditorComponent.setSubmitHandler((data) => {
-
-      // добавить обработку offer
-      const dataToPoint = {
-        id: data.id,
-        destination: data[`event-destination`],
-        startDate: data[`event-start-time`],
-        endDate: data[`event-end-time`],
-        price: data[`event-price`],
-        isFavorite: false,
-      };
-
-      this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, Object.assign({}, this._point, dataToPoint));
+      this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, data);
+      this._mode = MODE.EDITING;
       this._closeEditor();
     });
     this._pointEditorComponent.setDeleteHandler(() => {
       this._pointsModel.deletePoint(this._point);
-
-      // this.destroy();
     });
 
 
@@ -93,7 +81,7 @@ export default class PointPresenter {
     document.removeEventListener(`keydown`, this.closeEditorByEsc);
 
     if (this._mode === MODE.ADD) {
-      // this.destroy();
+
       this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, this._point);
       return;
     }
@@ -122,8 +110,6 @@ export default class PointPresenter {
     this._pointComponent.getElement().remove();
     this._pointEditorComponent.getElement().remove();
     this._pointComponent.removeElement();
-    // this._pointComponent = null;
-    this._pointEditorComponent.removeElement(); // ?
-    // this._pointEditorComponent = null;
+    this._pointEditorComponent.removeElement();
   }
 }

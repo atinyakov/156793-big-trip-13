@@ -1,6 +1,9 @@
 import dayjs from "dayjs";
 import Abstract from './abstract';
 
+import {OFFERS} from "../mock/constants";
+
+
 const duration = (start, end) => {
   const minutes = dayjs(end).diff(start, `m`);
   if (minutes / 60 < 1) {
@@ -43,12 +46,13 @@ const createTemplate = ({
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${offers.reduce((acc, {title, price}) => {
+      ${offers.reduce((acc, el) => {
+    const selected = OFFERS.find((offer) => offer.id === el);
     return acc + `<li class="event__offer">
-        <span class="event__offer-title">${title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
-      </li>`;
+            <span class="event__offer-title">${selected.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${selected.price}</span>
+          </li>`;
   }, ``)}
     </ul>
     <button class="${favoriteClasslist}" type="button">

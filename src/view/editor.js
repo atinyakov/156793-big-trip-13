@@ -1,6 +1,16 @@
 import dayjs from "dayjs";
 import Smart from './smart';
-import {CITIES, CITIES_DATA, mapTypeToOffer, MODE} from "../mock/constants";
+import {CITIES, CITIES_DATA, mapTypeToOffer, MODE, OFFERS} from "../mock/constants";
+
+// const map = {
+//   [`Add luggage`]: `luggage`,
+//   [`Switch to comfort class`]: `comfort`,
+//   [`Choose seats`]: `seats`,
+//   [`Travel by train`]: `train`,
+//   [`Add meal`]: `meal`,
+//   [`Order Uber`]: `uber`,
+// };
+
 
 const createEditor = ({
   type = `train`,
@@ -11,26 +21,18 @@ const createEditor = ({
   offers = [],
 }, mode = `add`) => {
 
-  const map = {
-    [`Add luggage`]: `luggage`,
-    [`Switch to comfort class`]: `comfort`,
-    [`Choose seats`]: `seats`,
-    [`Travel by train`]: `train`,
-    [`Add meal`]: `meal`,
-    [`Order Uber`]: `uber`,
-  };
-
 
   const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
 
-  const offersMarkup = mapTypeToOffer.get(derivedType(type)).reduce((acc, {title, price}) => {
+  const offersMarkup = mapTypeToOffer.get(derivedType(type)).reduce((acc, id) => {
+    const offer = OFFERS.find((el) => el.id === id);
     return acc.concat(
         `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${map[title]}" type="checkbox" name="event-offer-${map[title]}" ${offers.findIndex((offer) => offer.title === title) !== -1 && `checked`}>
-        <label class="event__offer-label" for="event-offer-${map[title]}">
-          <span class="event__offer-title">${title}</span>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}" type="checkbox" name="event-offer-${offer.name}" ${offers.findIndex((c) => c === id) !== -1 && `checked`}>
+        <label class="event__offer-label" for="event-offer-${offer.name}">
+          <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
-          <span class="event__offer-price">${price}</span>
+          <span class="event__offer-price">${offer.price}</span>
         </label>
       </div>`);
   }, ``);
@@ -115,7 +117,7 @@ const createEditor = ({
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         ${point !== undefined ? `<p class="event__destination-description">${point.description}</p>` : ``}
         ${mode === MODE.EDITING && point !== undefined ? `<div class="event__photos-container">
-           <div class="event__photos-tape">${ picturesMarkup}</div>
+           <div class="event__photos-tape">${picturesMarkup}</div>
         </div>` : ``}
       </section>
     </section>
@@ -124,15 +126,20 @@ const createEditor = ({
 };
 
 export default class Editor extends Smart {
-  constructor(data, mode) {
+  constructor(data = {offers: []}, mode) {
     super();
     this._data = data;
     this._mode = mode;
+    this._current = data;
     this._callback = {};
     this._clickHandler = this._clickHandler.bind(this);
     this._deleteHandler = this._deleteHandler.bind(this);
     this._typeHandler = this._typeHandler.bind(this);
     this._cityHandler = this._cityHandler.bind(this);
+    this._endDateHandler = this._endDateHandler.bind(this);
+    this._startDateHandler = this._startDateHandler.bind(this);
+    this._offerHandler = this._offerHandler.bind(this);
+    this._priceHandler = this._priceHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -154,8 +161,6 @@ export default class Editor extends Smart {
   _deleteHandler(e) {
     e.preventDefault();
     this._callback.delete(this._data);
-
-    // this._element.getElement().remove();
   }
 
   _typeHandler(e) {
@@ -168,6 +173,39 @@ export default class Editor extends Smart {
     e.preventDefault();
 
     this._updateData({destination: e.target.value});
+
+  }
+
+  _startDateHandler(e) {
+    e.preventDefault();
+
+    this._updateData({startTime: e.target.value}, true);
+  }
+
+  _endDateHandler(e) {
+    e.preventDefault();
+
+    this._updateData({endTime: e.target.value}, true);
+  }
+
+  _priceHandler(e) {
+    e.preventDefault();
+
+    this._updateData({price: e.target.value}, true);
+  }
+
+  _offerHandler(e) {
+    e.preventDefault();
+
+    const offerName = e.target.id.replace(`event-offer-`, ``);
+    const {id} = OFFERS.find((el) => el.name === offerName);
+
+    if (e.target.checked) {
+      this._updateData({offers: this._data.offers ? [...this._data.offers, id] : [id]}, true);
+
+    } else {
+      this._updateData({offers: this._data.offers.filter((offId) => offId !== id)}, true);
+    }
   }
 
   setClickHandler(cb) {
@@ -183,14 +221,14 @@ export default class Editor extends Smart {
     form.addEventListener(`submit`, (e) => {
       e.preventDefault();
 
-      const formData = new FormData(form);
-      let update = {};
+      // const formData = new FormData(form);
+      // let update = {};
 
-      for (let [key, value] of formData.entries()) {
-        update = Object.assign(update, {[key]: value});
-      }
+      // for (let [key, value] of formData.entries()) {
+      //   update = Object.assign(update, {[key]: value});
+      // }
 
-      this._submitHandler(e, Object.assign(this._data, update));
+      this._submitHandler(e, this._data);
     });
   }
 
@@ -203,6 +241,10 @@ export default class Editor extends Smart {
   _setInnerHandlers() {
     this.getElement().querySelector(`.event__type-group`).addEventListener(`change`, this._typeHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityHandler);
+    this.getElement().querySelector(`#event-start-time`).addEventListener(`keyup`, this._startDateHandler);
+    this.getElement().querySelector(`#event-end-time`).addEventListener(`keyup`, this._endDateHandler);
+    this.getElement().querySelector(`#event-price`).addEventListener(`change`, this._priceHandler);
+    this.getElement().querySelector(`.event__available-offers`).addEventListener(`change`, this._offerHandler);
   }
 
   restoreHandlers() {
