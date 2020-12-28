@@ -11,6 +11,8 @@ import {CITIES, CITIES_DATA, mapTypeToOffer, MODE, OFFERS} from "../mock/constan
 //   [`Order Uber`]: `uber`,
 // };
 
+const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
+
 
 const createEditor = ({
   type = `train`,
@@ -21,8 +23,6 @@ const createEditor = ({
   offers = [],
 }, mode = `add`) => {
 
-
-  const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
 
   const offersMarkup = mapTypeToOffer.get(derivedType(type)).reduce((acc, id) => {
     const offer = OFFERS.find((el) => el.id === id);
@@ -166,7 +166,7 @@ export default class Editor extends Smart {
   _typeHandler(e) {
     e.preventDefault();
 
-    this._updateData({type: e.target.value});
+    this._updateData({type: e.target.value, offers: []});
   }
 
   _cityHandler(e) {
@@ -220,13 +220,6 @@ export default class Editor extends Smart {
 
     form.addEventListener(`submit`, (e) => {
       e.preventDefault();
-
-      // const formData = new FormData(form);
-      // let update = {};
-
-      // for (let [key, value] of formData.entries()) {
-      //   update = Object.assign(update, {[key]: value});
-      // }
 
       this._submitHandler(e, this._data);
     });

@@ -24,6 +24,10 @@ export default class SortingPresenter {
   }
 
   setCurrentValue(data) {
+    if (this._currentValue === data) {
+      return;
+    }
+
     this.currentValue = data;
     this._cb();
   }
