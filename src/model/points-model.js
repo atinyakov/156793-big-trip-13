@@ -8,8 +8,22 @@ export default class PointsModel extends Observer {
     this.points = [];
   }
 
-  setPoints(points) {
+  setPoints(points, update = false) {
     this.points = [...points];
+    if (update) {
+      this.notify(UPDATE_TYPE.MAJOR);
+    }
+  }
+
+  setData(name, data) {
+    this[name] = data;
+  }
+
+  getData(name) {
+    if (!this[name]) {
+      throw new Error(`property ${name} does not exist on ${this}`);
+    }
+    return this[name];
   }
 
   getPoints(filter) {

@@ -1,15 +1,32 @@
 import dayjs from "dayjs";
 import Smart from './smart';
-import {CITIES, CITIES_DATA, mapTypeToOffer, MODE, OFFERS} from "../mock/constants";
+import {MODE} from "../mock/constants";
 
 // const map = {
 //   [`Add luggage`]: `luggage`,
-//   [`Switch to comfort class`]: `comfort`,
+//   [`Upgrade to comfort class`]: `comfort`,
 //   [`Choose seats`]: `seats`,
-//   [`Travel by train`]: `train`,
-//   [`Add meal`]: `meal`,
-//   [`Order Uber`]: `uber`,
+//   // [`Travel by train`]: `train`,
+//   [`Choose meal`]: `meal`,
+//   // [`Order Uber`]: `uber`,
+//   [`Upgrade to a business class`]: `business`,
+//   [`Choose the radio station`]: `radio`,
+//   [`Choose temperature`]: `temperature`,
+//   [`Drive quickly, I'm in a hurry`]: `quickly`,
+//   [`Drive slowly`]: `slowly`,
+//   [`Order meal`]: `meal`,
+//   [`Infotainment system`]: `infotainment`,
+//   [`Book a taxi at the arrival point`]: `taxi`,
+//   [`Order a breakfast`]: `breakfast`,
+//   [`Add breakfast`]: `add-breakfast`,
+//   [`Wake up at a certain time`]: `wakeup`,
+//   [`Business lounge`]: `lounge`,
+//   [`Choose the time of check-in`]: `checkin`,
+//   [`Choose the time of check-out`]: `checkout`,
+//   [`Laundry`]: `laundry`,
+//   [`"Order a meal from the restaurant`]: `restaurant`,
 // };
+
 
 const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
 
@@ -17,31 +34,32 @@ const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].joi
 const createEditor = ({
   type = `train`,
   destination = `Москва`,
+  description,
   price: eventPrice = 0,
   startTime = dayjs(),
   endTime = dayjs(),
   offers = [],
-}, mode = `add`) => {
+}, mode = `add`, offersByType, destinations) => {
 
 
-  const offersMarkup = mapTypeToOffer.get(derivedType(type)).reduce((acc, id) => {
-    const offer = OFFERS.find((el) => el.id === id);
-    return acc.concat(
-        `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}" type="checkbox" name="event-offer-${offer.name}" ${offers.findIndex((c) => c === id) !== -1 && `checked`}>
-        <label class="event__offer-label" for="event-offer-${offer.name}">
-          <span class="event__offer-title">${offer.title}</span>
+  const currentTypeData = offersByType.find((el) => el.type === type);
+
+  const offersMarkup = currentTypeData.offers.map((current, index) => {
+    return `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${index}" type="checkbox" name="event-offer-${currentTypeData.type}" ${offers.findIndex((c) => c.title === current.title) !== -1 && `checked`}>
+        <label class="event__offer-label" for="event-offer-${index}">
+          <span class="event__offer-title">${current.title}</span>
           &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
+          <span class="event__offer-price">${current.price}</span>
         </label>
-      </div>`);
-  }, ``);
+      </div>`;
+  }).join(``);
 
-  const point = CITIES_DATA.find((el) => el.name === destination);
+  const point = destinations.find((el) => el.name === destination);
 
-  const picturesMarkup = point !== undefined && point.pictures.reduce((acc, url) => {
+  const picturesMarkup = point !== undefined && point.pictures.reduce((acc, {src, description: alt}) => {
     return acc.concat(
-        `<img class="event__photo" src="${url}" alt="Event photo">`);
+        `<img class="event__photo" src="${src}" alt="${alt}">`);
   }, ``);
 
   const typesData = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
@@ -77,9 +95,9 @@ const createEditor = ({
         <label class="event__label  event__type-output" for="event-destination">
           ${type}
         </label>
-        <input pattern="${CITIES_DATA.map((el) => el.name).join(`|`)}" class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination}" list="destination-list">
+        <input pattern="${destinations.map((el) => el.name).join(`|`)}" class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination}" list="destination-list">
         <datalist id="destination-list">
-          ${CITIES.reduce((acc, city) => acc + `<option value=${city}>${city}</option>`, ``)}
+          ${destinations.reduce((acc, city) => acc + `<option value=${city.name}>${city.name}</option>`, ``)}
         </datalist>
       </div>
 
@@ -115,7 +133,7 @@ const createEditor = ({
 
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        ${point !== undefined ? `<p class="event__destination-description">${point.description}</p>` : ``}
+        <p class="event__destination-description">${description}</p>
         ${mode === MODE.EDITING && point !== undefined ? `<div class="event__photos-container">
            <div class="event__photos-tape">${picturesMarkup}</div>
         </div>` : ``}
@@ -126,9 +144,11 @@ const createEditor = ({
 };
 
 export default class Editor extends Smart {
-  constructor(data = {offers: []}, mode) {
+  constructor(data = {offers: []}, mode, offersByType, destinations) {
     super();
     this._data = data;
+    this._offersByType = offersByType;
+    this._destinations = destinations;
     this._mode = mode;
     this._current = data;
     this._callback = {};
@@ -145,7 +165,7 @@ export default class Editor extends Smart {
   }
 
   getTemplate() {
-    return createEditor(this._data, this._mode);
+    return createEditor(this._data, this._mode, this._offersByType, this._destinations);
   }
 
   _clickHandler(e) {
@@ -197,14 +217,14 @@ export default class Editor extends Smart {
   _offerHandler(e) {
     e.preventDefault();
 
-    const offerName = e.target.id.replace(`event-offer-`, ``);
-    const {id} = OFFERS.find((el) => el.name === offerName);
+    const offerIndex = e.target.id.replace(`event-offer-`, ``);
+    const currentType = this._offersByType.find((el) => el.type === this._data.type);
 
     if (e.target.checked) {
-      this._updateData({offers: this._data.offers ? [...this._data.offers, id] : [id]}, true);
+      this._updateData({offers: this._data.offers ? [...this._data.offers, currentType.offers[offerIndex]] : currentType.offers[offerIndex]}, true);
 
     } else {
-      this._updateData({offers: this._data.offers.filter((offId) => offId !== id)}, true);
+      this._updateData({offers: this._data.offers.filter((off) => JSON.stringify(off) !== JSON.stringify(currentType.offers[offerIndex]))}, true);
     }
   }
 

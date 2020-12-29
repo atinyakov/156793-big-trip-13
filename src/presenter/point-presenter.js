@@ -26,8 +26,10 @@ export default class PointPresenter {
     const oldPoint = this._pointComponent;
     const oldEditor = this._pointEditorComponent;
 
-    this._pointComponent = new Point(point);
-    this._pointEditorComponent = new Editor(point, mode);
+    // console.log(this._pointsModel.getData(`offers`));
+
+    this._pointComponent = new Point(point, this._pointsModel.getData(`offers`));
+    this._pointEditorComponent = new Editor(point, mode, this._pointsModel.getData(`offers`), this._pointsModel.getData(`destinations`));
 
     this._pointComponent.setRollupHandler(() => {
       this._resetPoints();
