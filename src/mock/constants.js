@@ -120,7 +120,7 @@ export const FILTER_TYPE = {
 
 export const SORT_TYPE = {
   DAY: `sort-day`,
-  TYPE: `sort-type`,
+  TIME: `sort-time`,
   PRICE: `sort-price`,
 };
 
