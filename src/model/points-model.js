@@ -3,8 +3,9 @@ import dayjs from "dayjs";
 import {FILTER_TYPE, UPDATE_TYPE} from '../mock/constants';
 
 export default class PointsModel extends Observer {
-  constructor() {
+  constructor(api) {
     super();
+    this.api = api;
     this.points = [];
   }
 
@@ -46,24 +47,25 @@ export default class PointsModel extends Observer {
   }
 
   updatePoint(updateType, update) {
-    this.points = this.points.map((point) => {
-      return point.id === update.id ? update : point;
+    this.api.updateData(update).then((res) => {
+      if (res.ok) {
+        this.points = this.points.map((point) => {
+          return point.id === update.id ? update : point;
+        });
+        this.notify(updateType, update);
+      }
     });
-
-    this.notify(updateType, update);
   }
 
   addPoint(point) {
     this.points = [...this.points.filter((el) => Object.keys(el).length !== 1), point];
 
     this.notify(UPDATE_TYPE.MAJOR);
-
   }
 
   deletePoint(point) {
     this.points = this.points.filter((el) => el.id !== point.id);
 
     this.notify(UPDATE_TYPE.MAJOR);
-
   }
 }

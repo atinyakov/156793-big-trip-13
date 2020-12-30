@@ -4,7 +4,6 @@ import FilterModel from './model/filter-model';
 import Menu from "./view/menu";
 import Header from "./view/header";
 import TripPresenter from './presenter/trip-presenter';
-// import {points} from "./mock/point";
 import API from './api';
 const URL = `https://13.ecmascript.pages.academy/big-trip`;
 
@@ -12,9 +11,9 @@ const URL = `https://13.ecmascript.pages.academy/big-trip`;
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-controls`);
 const tripSorting = document.querySelector(`.trip-events`);
-const pointsModel = new PointsModel();
 
 const api = new API(URL, `eo0w590ik298123`);
+const pointsModel = new PointsModel(api);
 
 
 const filterModel = new FilterModel();

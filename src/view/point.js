@@ -7,9 +7,8 @@ const duration = (start, end) => {
   if (minutes / 60 < 1) {
     return `${minutes} М`;
   }
-  const hasDays = minutes / (24 * 60) > 1;
 
-  return hasDays ? dayjs(dayjs(end).diff(start)).format(`DD[D] HH[H] mm[M]`) : dayjs(dayjs(end).diff(start, `m`)).format(` HH[H] mm[M]`);
+  return dayjs(dayjs(end).diff(start, `ms`)).format(`DD[D] HH[H] mm[M]`);
 };
 
 const createTemplate = ({
@@ -22,7 +21,6 @@ const createTemplate = ({
   offers = [],
 } = {}) => {
   const favoriteClasslist = `event__favorite-btn ${isFavorite && `event__favorite-btn--active`}`;
-
 
   return `<li class="trip-events__item">
   <div class="event">
@@ -45,7 +43,6 @@ const createTemplate = ({
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
       ${offers.reduce((acc, el) => {
-    // const selected = OFFERS.find((offer) => offer.id === el);
     return acc + `<li class="event__offer">
             <span class="event__offer-title">${el.title}</span>
             &plus;&euro;&nbsp;
@@ -65,7 +62,6 @@ const createTemplate = ({
   </div>
 </li>`;
 };
-
 
 export default class Point extends Abstract {
   constructor(data, offerByType) {

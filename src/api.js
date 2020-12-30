@@ -16,7 +16,6 @@ export default class API {
     })
     .then((res) => res.json())
     .then((parsed) => this._mapToClient(parsed));
-    // .catch((e) => console.error(e.message));
   }
 
   getData(querry) {
@@ -28,32 +27,13 @@ export default class API {
       return new Error(`Ошибка запроса дополнительных опций`);
     })
     .then((res) => res.json());
-    // .catch((e) => console.error(e.message));
   }
 
-  // id: nanoid(10),
-  // type: POINT_TYPE[pointPosition],
-  // destination: city,
-  // startTime: dayjs(
-  //     `2019-01-11 ${getRandomInteger(0, 1)}:${getRandomInteger(30, 59)}`,
-  //     `YYYY-MM-DD H:m`
-  // ).toDate(),
-  // endTime: dayjs(
-  //     `2019-01-1${getRandomInteger(1, 2)} ${getRandomInteger(1, 2)}:${getRandomInteger(0, 2)}`,
-  //     `YYYY-MM-DD H:m`
-  // ).toDate(),
-  // price: getRandomInteger(1, 10) * 10,
-  // offers: mapTypeToOffer.get(POINT_TYPE[pointPosition]), // id[]
-  // isFavorite: !!getRandomInteger(0, 1),
+  updateData(update) {
+    const body = this._mapToServer(update);
 
-  //   base_price: 800
-  // date_from: "2020-12-27T08:21:58.677Z"
-  // date_to: "2020-12-28T04:34:51.963Z"
-  // destination: {name: "Saint Petersburg", description: "Saint Petersburg, is a beautiful city, a true asia…ddle East, a perfect place to stay with a family.", pictures: Array(4)}
-  // id: "0"
-  // is_favorite: false
-  // offers: (2) [{…}, {…}]
-  // type: "taxi"
+    return this._client(`/points/${body.id}`, {method: `PUT`, body});
+  }
 
   _mapToClient(res) {
     return new Promise((resolve) => {
@@ -78,9 +58,26 @@ export default class API {
     });
   }
 
-  _client(querry, method = `GET`, body) {
-    return fetch(`${URL}${querry}`, {method, headers: {
-      'Authorization': `Basic ${this._auth}`
-    }, body: body && JSON.stringify(body)});
+  _mapToServer(data) {
+    return {
+      [`base_price`]: +data.price,
+      [`date_from`]: data.startTime,
+      [`date_to`]: data.endTime,
+      [`is_favorite`]: data.isFavorite,
+      destination: {
+        name: data.destination,
+        description: data.description,
+        pictures: data.pictures},
+      id: data.id,
+      offers: data.offers,
+      type: data.type
+    };
+  }
+
+  _client(querry, {method, body} = {method: `GET`}) {
+    return fetch(`${URL}${querry}`,
+        {method,
+          headers: method !== `GET` ? Object.assign({}, {'Authorization': `Basic ${this._auth}`, 'Content-Type': `application/json;charset=UTF-8`}) : {'Authorization': `Basic ${this._auth}`},
+          body: body && JSON.stringify(body)});
   }
 }

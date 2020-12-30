@@ -2,35 +2,8 @@ import dayjs from "dayjs";
 import Smart from './smart';
 import {MODE} from "../mock/constants";
 
-// const map = {
-//   [`Add luggage`]: `luggage`,
-//   [`Upgrade to comfort class`]: `comfort`,
-//   [`Choose seats`]: `seats`,
-//   // [`Travel by train`]: `train`,
-//   [`Choose meal`]: `meal`,
-//   // [`Order Uber`]: `uber`,
-//   [`Upgrade to a business class`]: `business`,
-//   [`Choose the radio station`]: `radio`,
-//   [`Choose temperature`]: `temperature`,
-//   [`Drive quickly, I'm in a hurry`]: `quickly`,
-//   [`Drive slowly`]: `slowly`,
-//   [`Order meal`]: `meal`,
-//   [`Infotainment system`]: `infotainment`,
-//   [`Book a taxi at the arrival point`]: `taxi`,
-//   [`Order a breakfast`]: `breakfast`,
-//   [`Add breakfast`]: `add-breakfast`,
-//   [`Wake up at a certain time`]: `wakeup`,
-//   [`Business lounge`]: `lounge`,
-//   [`Choose the time of check-in`]: `checkin`,
-//   [`Choose the time of check-out`]: `checkout`,
-//   [`Laundry`]: `laundry`,
-//   [`"Order a meal from the restaurant`]: `restaurant`,
-// };
-
 
 const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
-
-
 const createEditor = ({
   type = `train`,
   destination = `Москва`,
@@ -39,9 +12,8 @@ const createEditor = ({
   startTime = dayjs(),
   endTime = dayjs(),
   offers = [],
+  pictures = [],
 }, mode = `add`, offersByType, destinations) => {
-
-
   const currentTypeData = offersByType.find((el) => el.type === type);
 
   const offersMarkup = currentTypeData.offers.map((current, index) => {
@@ -55,9 +27,7 @@ const createEditor = ({
       </div>`;
   }).join(``);
 
-  const point = destinations.find((el) => el.name === destination);
-
-  const picturesMarkup = point !== undefined && point.pictures.reduce((acc, {src, description: alt}) => {
+  const picturesMarkup = pictures.reduce((acc, {src, description: alt}) => {
     return acc.concat(
         `<img class="event__photo" src="${src}" alt="${alt}">`);
   }, ``);
@@ -134,7 +104,7 @@ const createEditor = ({
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${description}</p>
-        ${mode === MODE.EDITING && point !== undefined ? `<div class="event__photos-container">
+        ${mode === MODE.EDITING && !!pictures.length ? `<div class="event__photos-container">
            <div class="event__photos-tape">${picturesMarkup}</div>
         </div>` : ``}
       </section>
@@ -146,9 +116,9 @@ const createEditor = ({
 export default class Editor extends Smart {
   constructor(data = {offers: []}, mode, offersByType, destinations) {
     super();
-    this._data = data;
     this._offersByType = offersByType;
     this._destinations = destinations;
+    this._data = Object.assign({}, data, {pictures: destinations.find((el) => el.name === data.destination).pictures});
     this._mode = mode;
     this._current = data;
     this._callback = {};

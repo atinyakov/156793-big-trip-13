@@ -26,8 +26,6 @@ export default class PointPresenter {
     const oldPoint = this._pointComponent;
     const oldEditor = this._pointEditorComponent;
 
-    // console.log(this._pointsModel.getData(`offers`));
-
     this._pointComponent = new Point(point, this._pointsModel.getData(`offers`));
     this._pointEditorComponent = new Editor(point, mode, this._pointsModel.getData(`offers`), this._pointsModel.getData(`destinations`));
 
@@ -75,8 +73,6 @@ export default class PointPresenter {
     if (this._mode === MODE.DEFAULT) {
       replace(this._pointComponent, oldPoint);
     }
-
-
   }
 
   _closeEditor() {
