@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import Smart from './smart';
+import flatpickr from "flatpickr";
 import {CITIES, CITIES_DATA, mapTypeToOffer, MODE, OFFERS} from "../mock/constants";
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 // const map = {
 //   [`Add luggage`]: `luggage`,

@@ -12,5 +12,13 @@ module.exports = ({mode}) => ({
     compress: true,
     port: 3000,
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ]
+  },
   devtool: "source-map",
 });
