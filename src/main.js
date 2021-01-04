@@ -17,7 +17,6 @@ const pointsModel = new PointsModel(api);
 
 
 const filterModel = new FilterModel();
-render(tripMain, new Header(pointsModel, filterModel), RenderPosition.AFTERBEGIN);
 render(tripControls, new Menu(), RenderPosition.AFTERBEGIN);
 
 
@@ -29,6 +28,8 @@ Promise.all([
   api.getPoints().then((points) => pointsModel.setPoints(points)).catch(() => pointsModel.setPoints([])),
 ]).then(() => {
   trip.init();
+  render(tripMain, new Header(pointsModel, filterModel), RenderPosition.AFTERBEGIN);
+
 });
 
 

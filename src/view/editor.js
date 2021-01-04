@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+let customParseFormat = require(`dayjs/plugin/customParseFormat`);
+dayjs.extend(customParseFormat);
 import Smart from './smart';
 import {MODE} from "../mock/constants";
 
@@ -6,11 +8,11 @@ import {MODE} from "../mock/constants";
 const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
 const createEditor = ({
   type = `train`,
-  destination = `Москва`,
+  destination,
   description,
   price: eventPrice = 0,
-  startTime = dayjs(),
-  endTime = dayjs(),
+  startTime,
+  endTime,
   offers = [],
   pictures = [],
 }, mode = `add`, offersByType, destinations) => {
@@ -114,11 +116,21 @@ const createEditor = ({
 };
 
 export default class Editor extends Smart {
-  constructor(data = {offers: []}, mode, offersByType, destinations) {
+  constructor(data, mode, offersByType, destinations) {
     super();
     this._offersByType = offersByType;
     this._destinations = destinations;
-    this._data = Object.assign({}, data, {pictures: destinations.find((el) => el.name === data.destination).pictures});
+    this._data = Object.assign(
+        {
+          offers: [],
+          type: `train`,
+          price: 0,
+          startTime: dayjs(),
+          endTime: dayjs(),
+          isFavorite: false,
+          destination: destinations[0].name,
+          description: destinations.find((el) => el.name === (data.destination || destinations[0].name)).description},
+        data, {pictures: destinations.find((el) => el.name === (data.destination || destinations[0].name)).pictures});
     this._mode = mode;
     this._current = data;
     this._callback = {};
@@ -140,6 +152,8 @@ export default class Editor extends Smart {
 
   _clickHandler(e) {
     e.preventDefault();
+    this._updateData(this._current);
+
     this._callback.click();
   }
 
@@ -169,13 +183,13 @@ export default class Editor extends Smart {
   _startDateHandler(e) {
     e.preventDefault();
 
-    this._updateData({startTime: e.target.value}, true);
+    this._updateData({startTime: dayjs(e.target.value, `DD/MM/YY HH:mm`).toISOString()}, true);
   }
 
   _endDateHandler(e) {
     e.preventDefault();
 
-    this._updateData({endTime: e.target.value}, true);
+    this._updateData({endTime: dayjs(e.target.value, `DD/MM/YY HH:mm`).toISOString()}, true);
   }
 
   _priceHandler(e) {
@@ -190,8 +204,9 @@ export default class Editor extends Smart {
     const offerIndex = e.target.id.replace(`event-offer-`, ``);
     const currentType = this._offersByType.find((el) => el.type === this._data.type);
 
+
     if (e.target.checked) {
-      this._updateData({offers: this._data.offers ? [...this._data.offers, currentType.offers[offerIndex]] : currentType.offers[offerIndex]}, true);
+      this._updateData({offers: this._data.offers.length ? [...this._data.offers, currentType.offers[offerIndex]] : currentType.offers[offerIndex]}, true);
 
     } else {
       this._updateData({offers: this._data.offers.filter((off) => JSON.stringify(off) !== JSON.stringify(currentType.offers[offerIndex]))}, true);

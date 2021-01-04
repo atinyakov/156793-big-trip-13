@@ -1,5 +1,3 @@
-const URL = `https://13.ecmascript.pages.academy/big-trip`;
-
 export default class API {
   constructor(url, auth) {
     this._url = url;
@@ -65,8 +63,8 @@ export default class API {
       [`date_to`]: data.endTime,
       [`is_favorite`]: data.isFavorite,
       destination: {
-        name: data.destination,
         description: data.description,
+        name: data.destination,
         pictures: data.pictures},
       id: data.id,
       offers: data.offers,
@@ -75,7 +73,7 @@ export default class API {
   }
 
   _client(querry, {method, body} = {method: `GET`}) {
-    return fetch(`${URL}${querry}`,
+    return fetch(`${this._url}${querry}`,
         {method,
           headers: method !== `GET` ? Object.assign({}, {'Authorization': `Basic ${this._auth}`, 'Content-Type': `application/json;charset=UTF-8`}) : {'Authorization': `Basic ${this._auth}`},
           body: body && JSON.stringify(body)});
