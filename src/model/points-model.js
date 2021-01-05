@@ -47,25 +47,49 @@ export default class PointsModel extends Observer {
   }
 
   updatePoint(updateType, update) {
+    if (update.id === undefined) {
+      this.notify(UPDATE_TYPE.MAJOR);
+      return;
+    }
+
     this.api.updateData(update).then((res) => {
-      if (res.ok) {
+      if (res.status === 200) {
         this.points = this.points.map((point) => {
           return point.id === update.id ? update : point;
         });
         this.notify(updateType, update);
       }
+      throw new Error(`Cant update point`);
+
+    })
+    .catch(() => {
+      this.notify(UPDATE_TYPE.PATCH, Object.assign(update, {hasError: true}));
     });
   }
 
-  addPoint(point) {
-    this.points = [...this.points.filter((el) => Object.keys(el).length !== 1), point];
 
-    this.notify(UPDATE_TYPE.MAJOR);
+  addPoint(point) {
+    this.api.createData(point)
+    .then((updatedPoint) => {
+      this.points = [...this.points, ...updatedPoint];
+      this.notify(UPDATE_TYPE.MAJOR);
+    })
+    .catch(() => {
+      this.notify(UPDATE_TYPE.PATCH, Object.assign(point, {hasError: true}));
+    });
   }
 
   deletePoint(point) {
-    this.points = this.points.filter((el) => el.id !== point.id);
-
-    this.notify(UPDATE_TYPE.MAJOR);
+    this.api.deleteData(point)
+    .then((res) => {
+      if (res.status === 200) {
+        this.points = this.points.filter((el) => el.id !== point.id);
+        this.notify(UPDATE_TYPE.MAJOR);
+      }
+      throw new Error(`Cant delete point`);
+    })
+    .catch(() => {
+      this.notify(UPDATE_TYPE.PATCH, Object.assign(point, {hasError: true}));
+    });
   }
 }

@@ -1,8 +1,7 @@
 import dayjs from "dayjs";
-let customParseFormat = require(`dayjs/plugin/customParseFormat`);
+const customParseFormat = require(`dayjs/plugin/customParseFormat`);
 dayjs.extend(customParseFormat);
 import Smart from './smart';
-import {MODE} from "../mock/constants";
 
 
 const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
@@ -15,12 +14,16 @@ const createEditor = ({
   endTime,
   offers = [],
   pictures = [],
+  isDeleting,
+  isSaving,
+  hasError
 }, mode = `add`, offersByType, destinations) => {
   const currentTypeData = offersByType.find((el) => el.type === type);
+  const isDisabled = isDeleting || isSaving;
 
   const offersMarkup = currentTypeData.offers.map((current, index) => {
     return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${index}" type="checkbox" name="event-offer-${currentTypeData.type}" ${offers.findIndex((c) => c.title === current.title) !== -1 && `checked`}>
+        <input ${isDisabled && `disabled`} class="event__offer-checkbox  visually-hidden" id="event-offer-${index}" type="checkbox" name="event-offer-${currentTypeData.type}" ${offers.length && offers.findIndex((c) => c.title === current.title) !== -1 && `checked`}>
         <label class="event__offer-label" for="event-offer-${index}">
           <span class="event__offer-title">${current.title}</span>
           &plus;&euro;&nbsp;
@@ -34,11 +37,12 @@ const createEditor = ({
         `<img class="event__photo" src="${src}" alt="${alt}">`);
   }, ``);
 
+
   const typesData = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
   const types = typesData.reduce((acc, data) => {
     return acc.concat(
         `<div class="event__type-item">
-        <input id="event-type-${data}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${data}" ${type === derivedType(data)
+        <input ${isDisabled && `disabled`} id="event-type-${data}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${data}" ${type === derivedType(data)
            && `checked`}>
         <label class="event__type-label  event__type-label--${data}" for="event-type-${data}">${derivedType(data)}</label>
       </div>`
@@ -46,14 +50,14 @@ const createEditor = ({
   }, ``);
 
   return `<li class="trip-events__item">
-  <form class="event event--edit" action="#" method="post">
+  <form class="event event--edit ${hasError ? `shake` : `` }" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle">
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">
+        <input ${isDisabled && `disabled`} class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">
 
         <div class="event__type-list">
           <fieldset class="event__type-group">
@@ -67,7 +71,7 @@ const createEditor = ({
         <label class="event__label  event__type-output" for="event-destination">
           ${type}
         </label>
-        <input pattern="${destinations.map((el) => el.name).join(`|`)}" class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination}" list="destination-list">
+        <input ${isDisabled && `disabled`} pattern="${destinations.map((el) => el.name).join(`|`)}" class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination}" list="destination-list">
         <datalist id="destination-list">
           ${destinations.reduce((acc, city) => acc + `<option value=${city.name}>${city.name}</option>`, ``)}
         </datalist>
@@ -75,10 +79,10 @@ const createEditor = ({
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time">From</label>
-        <input class="event__input  event__input--time" id="event-start-time" type="text" name="event-start-time" value="${dayjs(startTime).format(`DD/MM/YY HH:mm`)}">
+        <input ${isDisabled && `disabled`} class="event__input  event__input--time" id="event-start-time" type="text" name="event-start-time" value="${dayjs(startTime).format(`DD/MM/YY HH:mm`)}">
         &mdash;
         <label class="visually-hidden" for="event-end-time">To</label>
-        <input class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" value="${dayjs(endTime).format(`DD/MM/YY HH:mm`)}">
+        <input ${isDisabled && `disabled`} class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" value="${dayjs(endTime).format(`DD/MM/YY HH:mm`)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -86,12 +90,12 @@ const createEditor = ({
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${eventPrice}">
+        <input ${isDisabled && `disabled`} class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${eventPrice}">
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <button class="event__rollup-btn" type="button">
+      <button class="event__save-btn  btn  btn--blue" ${isDisabled && `disabled`} type="submit">${isSaving ? `Saving...` : `Save`}</button>
+      <button class="event__reset-btn" ${(isDisabled || mode === `ADD`) && `disabled`} type="reset">${isDeleting ? `Deleting...` : `Delete`}</button>
+      <button class="event__rollup-btn" ${isDisabled && `disabled`} type="button">
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
@@ -106,7 +110,7 @@ const createEditor = ({
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${description}</p>
-        ${mode === MODE.EDITING && !!pictures.length ? `<div class="event__photos-container">
+        ${pictures.length ? `<div class="event__photos-container">
            <div class="event__photos-tape">${picturesMarkup}</div>
         </div>` : ``}
       </section>
@@ -122,6 +126,9 @@ export default class Editor extends Smart {
     this._destinations = destinations;
     this._data = Object.assign(
         {
+          isDeleting: false,
+          isSaving: false,
+          hasError: false,
           offers: [],
           type: `train`,
           price: 0,
@@ -134,6 +141,7 @@ export default class Editor extends Smart {
     this._mode = mode;
     this._current = data;
     this._callback = {};
+
     this._clickHandler = this._clickHandler.bind(this);
     this._deleteHandler = this._deleteHandler.bind(this);
     this._typeHandler = this._typeHandler.bind(this);
@@ -153,17 +161,22 @@ export default class Editor extends Smart {
   _clickHandler(e) {
     e.preventDefault();
     this._updateData(this._current);
+    this.getElement().querySelector(`form`).classList.remove(`shake`);
 
     this._callback.click();
   }
 
   _submitHandler(e, data) {
     e.preventDefault();
+    this._updateData(Object.assign({}, data, {isSaving: true}));
+
     this._callback.submit(data);
   }
 
   _deleteHandler(e) {
     e.preventDefault();
+    this._updateData(Object.assign({}, this._data, {isDeleting: true}));
+
     this._callback.delete(this._data);
   }
 
@@ -206,7 +219,7 @@ export default class Editor extends Smart {
 
 
     if (e.target.checked) {
-      this._updateData({offers: this._data.offers.length ? [...this._data.offers, currentType.offers[offerIndex]] : currentType.offers[offerIndex]}, true);
+      this._updateData({offers: this._data.offers.length ? [...this._data.offers, currentType.offers[offerIndex]] : [currentType.offers[offerIndex]]}, true);
 
     } else {
       this._updateData({offers: this._data.offers.filter((off) => JSON.stringify(off) !== JSON.stringify(currentType.offers[offerIndex]))}, true);

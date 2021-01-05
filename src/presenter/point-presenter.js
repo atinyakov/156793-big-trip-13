@@ -10,18 +10,15 @@ export default class PointPresenter {
     this._container = container;
     this._pointsModel = pointsModel;
     this._resetPoints = resetPoints;
-    this._mode = MODE.DEFAULT;
+    this._mode = MODE.EDITING;
     this._closeEditor = this._closeEditor.bind(this);
     this._closeEditorByEsc = this._closeEditorByEsc.bind(this);
     this.getPointData = this.getPointData.bind(this);
   }
 
-  init(point, mode = MODE.EDITING) {
+  init(point, mode = this._mode) {
     this._point = point;
-
-    if (Object.keys(this._point).length === 1) {
-      this._mode = MODE.ADD;
-    }
+    this._mode = mode;
 
     const oldPoint = this._pointComponent;
     const oldEditor = this._pointEditorComponent;
@@ -41,12 +38,25 @@ export default class PointPresenter {
       this._pointsModel.updatePoint(UPDATE_TYPE.PATCH, Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}));
     });
 
-    this._pointEditorComponent.setClickHandler(this._closeEditor);
-    this._pointEditorComponent.setSubmitHandler((data) => {
-      this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, data);
-      this._mode = MODE.EDITING;
+    this._pointEditorComponent.setClickHandler(() => {
+      if (this._mode === MODE.ADD) {
+        this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, this._point);
+        return;
+      }
+
       this._closeEditor();
     });
+
+    this._pointEditorComponent.setSubmitHandler((data) => {
+      if (this._mode === MODE.ADD) {
+        this._pointsModel.addPoint(data);
+      }
+
+      if (this._mode === MODE.EDITING) {
+        this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, data);
+      }
+    });
+
     this._pointEditorComponent.setDeleteHandler(() => {
       this._pointsModel.deletePoint(this._point);
     });
@@ -54,16 +64,23 @@ export default class PointPresenter {
 
     if (oldPoint === undefined || oldEditor === undefined) {
       if (this._mode === MODE.DEFAULT) {
-
         render(this._container, this._pointComponent, RenderPosition.AFTERBEGIN);
+
         return;
       }
+
       if (this._mode === MODE.ADD) {
         render(this._container, this._pointEditorComponent, RenderPosition.AFTERBEGIN);
         document.addEventListener(`keydown`, this._closeEditorByEsc);
 
         return;
       }
+    }
+
+    if (oldPoint === undefined && oldEditor !== undefined) {
+      replace(this._pointEditorComponent, oldEditor);
+
+      return;
     }
 
     if (this._mode === MODE.EDITING) {
@@ -78,12 +95,7 @@ export default class PointPresenter {
   _closeEditor() {
     document.removeEventListener(`keydown`, this.closeEditorByEsc);
 
-    if (this._mode === MODE.ADD) {
-      this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, this._point);
-    } else {
-      replace(this._pointComponent, this._pointEditorComponent);
-    }
-
+    replace(this._pointComponent, this._pointEditorComponent);
     this._mode = MODE.DEFAULT;
   }
 

@@ -1,3 +1,6 @@
+const API_CODES = {
+  OK: 200
+};
 export default class API {
   constructor(url, auth) {
     this._url = url;
@@ -7,7 +10,7 @@ export default class API {
   getPoints() {
     return this._client(`/points`)
     .then((res) => {
-      if (res.ok) {
+      if (res.status === API_CODES.OK) {
         return res;
       }
       return new Error(`Ошибка запроса точек маршрута`);
@@ -19,7 +22,7 @@ export default class API {
   getData(querry) {
     return this._client(querry)
     .then((res) => {
-      if (res.ok) {
+      if (res.status === API_CODES.OK) {
         return res;
       }
       return new Error(`Ошибка запроса дополнительных опций`);
@@ -31,6 +34,23 @@ export default class API {
     const body = this._mapToServer(update);
 
     return this._client(`/points/${body.id}`, {method: `PUT`, body});
+  }
+
+  createData(update) {
+    const body = this._mapToServer(update);
+    return this._client(`/points`, {method: `POST`, body})
+    .then((res) => {
+      if (res.status === API_CODES.OK) {
+        return res;
+      }
+      throw new Error(`Cant add point`);
+    })
+    .then((res) => res.json())
+    .then((parsed) => this._mapToClient([parsed]));
+  }
+
+  deleteData(update) {
+    return this._client(`/points/${update.id}`, {method: `DELETE`});
   }
 
   _mapToClient(res) {

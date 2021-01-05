@@ -4,11 +4,11 @@ import Empty from "../view/empty";
 import PointPresenter from './point-presenter';
 import FilterPresenter from './filter-presenter';
 import SortingPresenter from './sort-presenter';
-import {SORT_TYPE, UPDATE_TYPE} from '../mock/constants';
+import {SORT_TYPE, UPDATE_TYPE, MODE} from '../mock/constants';
 
 import {render, RenderPosition} from '../helpers/utils';
 import Observers from '../helpers/observers';
-import {nanoid} from 'nanoid';
+// import {nanoid} from 'nanoid';
 import dayjs from "dayjs";
 
 
@@ -54,13 +54,13 @@ export default class TripPresenter {
 
     this. _resetPoints();
     this._newPoint = new PointPresenter(this._newPointContainer, this._pointsModel, this.resetPoints);
-    this._newPoint.init({id: nanoid(10)});
+    this._newPoint.init({}, MODE.ADD);
     this._pointObserver.subscribe(this._newPoint);
   }
 
   _renderPoint(container, point) {
     const pointPresenter = new PointPresenter(container, this._pointsModel, this.resetPoints);
-    pointPresenter.init(point);
+    pointPresenter.init(point, MODE.DEFAULT);
     this._pointObserver.subscribe(pointPresenter);
 
   }
