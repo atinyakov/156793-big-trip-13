@@ -132,7 +132,6 @@ export const USER_ACTION = {
 
 export const UPDATE_TYPE = {
   PATCH: `PATCH`,
-  MINOR: `MINOR`,
   MAJOR: `MAJOR`
 };
 

@@ -6,10 +6,11 @@ import {render, RenderPosition, replace} from '../helpers/utils';
 
 
 export default class PointPresenter {
-  constructor(container, pointsModel, resetPoints) {
+  constructor(container, pointsModel, resetPoints, filterModel) {
     this._container = container;
     this._pointsModel = pointsModel;
     this._resetPoints = resetPoints;
+    this._filterModel = filterModel;
     this._mode = MODE.EDITING;
     this._closeEditor = this._closeEditor.bind(this);
     this._closeEditorByEsc = this._closeEditorByEsc.bind(this);
@@ -39,12 +40,19 @@ export default class PointPresenter {
     });
 
     this._pointEditorComponent.setClickHandler(() => {
+      document.removeEventListener(`keydown`, this.closeEditorByEsc);
+
       if (this._mode === MODE.ADD) {
         this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, this._point);
         return;
       }
 
-      this._closeEditor();
+      if (this._point.hasError) {
+        this._pointsModel.setPoints(this._pointsModel.getPoints(
+            this._filterModel.getFilter()), true);
+        return;
+      }
+
     });
 
     this._pointEditorComponent.setSubmitHandler((data) => {

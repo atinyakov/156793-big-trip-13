@@ -142,7 +142,7 @@ export default class Editor extends Smart {
           isSaving: false
         });
     this._mode = mode;
-    this._current = data;
+    // console.log(` this._initial`, this._initial);
     this._callback = {};
 
     this._clickHandler = this._clickHandler.bind(this);
@@ -163,7 +163,6 @@ export default class Editor extends Smart {
 
   _clickHandler(e) {
     e.preventDefault();
-    this._updateData(this._current);
     this.getElement().querySelector(`form`).classList.remove(`shake`);
 
     this._callback.click();
@@ -193,7 +192,6 @@ export default class Editor extends Smart {
     e.preventDefault();
 
     this._updateData({destination: e.target.value});
-
   }
 
   _startDateHandler(e) {

@@ -54,12 +54,11 @@ export default class PointsModel extends Observer {
 
     this.api.updateData(update)
     .then((res) => {
-      if (res.ok) {
-        this.points = this.points.map((point) => {
+      if (res.status === 200) {
+        this.setPoints(this.points = this.points.map((point) => {
           return point.id === update.id ? update : point;
-        });
+        }));
         this.notify(updateType, update);
-        return;
       }
     })
     .catch(() => {
@@ -71,9 +70,7 @@ export default class PointsModel extends Observer {
   addPoint(point) {
     this.api.createData(point)
     .then((updatedPoint) => {
-      this.points = [...this.points, ...updatedPoint];
-      this.notify(UPDATE_TYPE.MAJOR);
-      return;
+      this.setPoints([...this.points, ...updatedPoint], true);
     })
     .catch(() => {
       this.notify(UPDATE_TYPE.PATCH, Object.assign(point, {hasError: true}));
@@ -84,8 +81,8 @@ export default class PointsModel extends Observer {
     this.api.deleteData(point)
     .then((res) => {
       if (res.status === 200) {
-        this.points = this.points.filter((el) => el.id !== point.id);
-        this.notify(UPDATE_TYPE.MAJOR);
+        this.setPoints(this.points.filter((el) => el.id !== point.id), true);
+
         return;
       }
       throw new Error(`Cant delete point`);
