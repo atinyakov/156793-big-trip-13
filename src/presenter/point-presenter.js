@@ -83,7 +83,11 @@ export default class PointPresenter {
       return;
     }
 
-    if (this._mode === MODE.EDITING) {
+    if (this._mode !== MODE.DEFAULT) {
+      if (oldPoint.parentElement === undefined) {
+        replace(this._pointEditorComponent, oldEditor);
+        return;
+      }
       replace(this._pointEditorComponent, oldPoint);
     }
 

@@ -126,8 +126,6 @@ export default class Editor extends Smart {
     this._destinations = destinations;
     this._data = Object.assign(
         {
-          isDeleting: false,
-          isSaving: false,
           hasError: false,
           offers: [],
           type: `train`,
@@ -137,7 +135,12 @@ export default class Editor extends Smart {
           isFavorite: false,
           destination: destinations[0].name,
           description: destinations.find((el) => el.name === (data.destination || destinations[0].name)).description},
-        data, {pictures: destinations.find((el) => el.name === (data.destination || destinations[0].name)).pictures});
+        data,
+        {
+          pictures: destinations.find((el) => el.name === (data.destination || destinations[0].name)).pictures,
+          isDeleting: false,
+          isSaving: false
+        });
     this._mode = mode;
     this._current = data;
     this._callback = {};
@@ -168,14 +171,14 @@ export default class Editor extends Smart {
 
   _submitHandler(e, data) {
     e.preventDefault();
-    this._updateData(Object.assign({}, data, {isSaving: true}));
+    this._updateData(Object.assign({}, data, {isSaving: true, hasError: false}));
 
     this._callback.submit(data);
   }
 
   _deleteHandler(e) {
     e.preventDefault();
-    this._updateData(Object.assign({}, this._data, {isDeleting: true}));
+    this._updateData(Object.assign({}, this._data, {isDeleting: true, hasError: false}));
 
     this._callback.delete(this._data);
   }
