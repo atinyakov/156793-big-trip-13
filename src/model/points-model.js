@@ -3,13 +3,28 @@ import dayjs from "dayjs";
 import {FILTER_TYPE, UPDATE_TYPE} from '../mock/constants';
 
 export default class PointsModel extends Observer {
-  constructor() {
+  constructor(api) {
     super();
+    this.api = api;
     this.points = [];
   }
 
-  setPoints(points) {
+  setPoints(points, update = false) {
     this.points = [...points];
+    if (update) {
+      this.notify(UPDATE_TYPE.MAJOR);
+    }
+  }
+
+  setData(name, data) {
+    this[name] = data;
+  }
+
+  getData(name) {
+    if (!this[name]) {
+      throw new Error(`property ${name} does not exist on ${this}`);
+    }
+    return this[name];
   }
 
   getPoints(filter) {
@@ -32,24 +47,48 @@ export default class PointsModel extends Observer {
   }
 
   updatePoint(updateType, update) {
-    this.points = this.points.map((point) => {
-      return point.id === update.id ? update : point;
-    });
+    if (update.id === undefined) {
+      this.notify(UPDATE_TYPE.MAJOR);
+      return;
+    }
 
-    this.notify(updateType, update);
+    this.api.updateData(update)
+    .then((res) => {
+      if (res.status === 200) {
+        this.setPoints(this.points = this.points.map((point) => {
+          return point.id === update.id ? update : point;
+        }));
+        this.notify(updateType, update);
+      }
+    })
+    .catch(() => {
+      this.notify(UPDATE_TYPE.PATCH, Object.assign(update, {hasError: true}));
+    });
   }
 
+
   addPoint(point) {
-    this.points = [...this.points.filter((el) => Object.keys(el).length !== 1), point];
-
-    this.notify(UPDATE_TYPE.MAJOR);
-
+    this.api.createData(point)
+    .then((updatedPoint) => {
+      this.setPoints([...this.points, ...updatedPoint], true);
+    })
+    .catch(() => {
+      this.notify(UPDATE_TYPE.PATCH, Object.assign(point, {hasError: true}));
+    });
   }
 
   deletePoint(point) {
-    this.points = this.points.filter((el) => el.id !== point.id);
+    this.api.deleteData(point)
+    .then((res) => {
+      if (res.status === 200) {
+        this.setPoints(this.points.filter((el) => el.id !== point.id), true);
 
-    this.notify(UPDATE_TYPE.MAJOR);
-
+        return;
+      }
+      throw new Error(`Cant delete point`);
+    })
+    .catch(() => {
+      this.notify(UPDATE_TYPE.PATCH, Object.assign(point, {hasError: true}));
+    });
   }
 }

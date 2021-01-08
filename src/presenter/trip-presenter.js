@@ -1,16 +1,13 @@
 
 import Empty from "../view/empty";
-// import Sorting from "../view/sorting";
 import PointPresenter from './point-presenter';
 import FilterPresenter from './filter-presenter';
 import SortingPresenter from './sort-presenter';
-import {SORT_TYPE, UPDATE_TYPE} from '../mock/constants';
+import {SORT_TYPE, UPDATE_TYPE, MODE} from '../mock/constants';
 
 import {render, RenderPosition} from '../helpers/utils';
 import Observers from '../helpers/observers';
-import {nanoid} from 'nanoid';
 import dayjs from "dayjs";
-
 
 export default class TripPresenter {
   constructor(target, pointsModel, filterModel) {
@@ -53,14 +50,14 @@ export default class TripPresenter {
     }
 
     this. _resetPoints();
-    this._newPoint = new PointPresenter(this._newPointContainer, this._pointsModel, this.resetPoints);
-    this._newPoint.init({id: nanoid(10)});
+    this._newPoint = new PointPresenter(this._newPointContainer, this._pointsModel, this.resetPoints, this._filterModel);
+    this._newPoint.init({}, MODE.ADD);
     this._pointObserver.subscribe(this._newPoint);
   }
 
   _renderPoint(container, point) {
-    const pointPresenter = new PointPresenter(container, this._pointsModel, this.resetPoints);
-    pointPresenter.init(point);
+    const pointPresenter = new PointPresenter(container, this._pointsModel, this.resetPoints, this._filterModel);
+    pointPresenter.init(point, MODE.DEFAULT);
     this._pointObserver.subscribe(pointPresenter);
 
   }
@@ -75,14 +72,9 @@ export default class TripPresenter {
           }
         });
         break;
-      // case UPDATE_TYPE.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
-      //   this._clearBoard();
-      //   this._renderBoard();
-      //   break;
       case UPDATE_TYPE.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
-        // this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        // this._clearBoard({resetRenderedTaskCount: true, resetSortType: true})
         this._resetPoints();
         this._clearTrip();
         this._renderTrip();
@@ -108,7 +100,6 @@ export default class TripPresenter {
 
   _renderTrip() {
     this._points = this._pointsModel.getPoints(this._filterModel.getFilter());
-
     const filter = this._sorting.getCurrentValue();
 
     switch (filter) {

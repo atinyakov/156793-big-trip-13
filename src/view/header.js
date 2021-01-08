@@ -40,8 +40,4 @@ export default class Header extends Abstract {
   getTemplate() {
     return createHeader(this._data);
   }
-
-  // updateHeader() {
-  //   console.log(`UPDATE HEADER`);
-  // }
 }

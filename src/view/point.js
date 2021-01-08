@@ -1,30 +1,26 @@
 import dayjs from "dayjs";
 import Abstract from './abstract';
 
-import {OFFERS} from "../mock/constants";
-
 
 const duration = (start, end) => {
   const minutes = dayjs(end).diff(start, `m`);
   if (minutes / 60 < 1) {
     return `${minutes} М`;
   }
-  const hasDays = minutes / (24 * 60) > 1;
 
-  return hasDays ? dayjs(dayjs(end).diff(start)).format(`DD[D] HH[H] mm[M]`) : dayjs(dayjs(end).diff(start, `m`)).format(` HH[H] mm[M]`);
+  return dayjs(dayjs(end).diff(start, `ms`)).format(`DD[D] HH[H] mm[M]`);
 };
 
 const createTemplate = ({
   type = `train`,
   destination = `Moscow`,
-  price: eventPtice = 0,
+  price: eventPrice = 0,
   isFavorite = false,
   startTime = dayjs(),
   endTime,
   offers = [],
 } = {}) => {
   const favoriteClasslist = `event__favorite-btn ${isFavorite && `event__favorite-btn--active`}`;
-
 
   return `<li class="trip-events__item">
   <div class="event">
@@ -42,16 +38,15 @@ const createTemplate = ({
       <p class="event__duration">${duration(startTime, endTime)}</p>
     </div>
     <p class="event__price">
-      &euro;&nbsp;<span class="event__price-value">${eventPtice}</span>
+      &euro;&nbsp;<span class="event__price-value">${eventPrice}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
       ${offers.reduce((acc, el) => {
-    const selected = OFFERS.find((offer) => offer.id === el);
     return acc + `<li class="event__offer">
-            <span class="event__offer-title">${selected.title}</span>
+            <span class="event__offer-title">${el.title}</span>
             &plus;&euro;&nbsp;
-            <span class="event__offer-price">${selected.price}</span>
+            <span class="event__offer-price">${el.price}</span>
           </li>`;
   }, ``)}
     </ul>
@@ -68,16 +63,16 @@ const createTemplate = ({
 </li>`;
 };
 
-
 export default class Point extends Abstract {
-  constructor(data) {
+  constructor(data, offerByType) {
     super();
     this._data = data;
+    this._offerByType = offerByType;
     this._callback = {};
   }
 
   getTemplate() {
-    return createTemplate(this._data);
+    return createTemplate(this._data, this._offerByType);
   }
 
   _rollupHandler(e) {
