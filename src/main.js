@@ -2,8 +2,10 @@ import {render, RenderPosition} from './helpers/utils';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
 import Menu from "./view/menu";
-import Header from "./view/header";
 import TripPresenter from './presenter/trip-presenter';
+import StatsPresenter from './presenter/stats-presenter';
+import HeaderPresenter from './presenter/header-presenter';
+
 import API from './api';
 const URL = `https://13.ecmascript.pages.academy/big-trip`;
 
@@ -11,16 +13,16 @@ const URL = `https://13.ecmascript.pages.academy/big-trip`;
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-controls`);
 const tripSorting = document.querySelector(`.trip-events`);
+const tripStats = document.querySelector(`main .page-body__container`);
 
 const api = new API(URL, `eo0w590ik298123`);
 const pointsModel = new PointsModel(api);
-
-
 const filterModel = new FilterModel();
-render(tripControls, new Menu(), RenderPosition.AFTERBEGIN);
 
 
 const trip = new TripPresenter(tripSorting, pointsModel, filterModel);
+const stats = new StatsPresenter(tripStats, pointsModel, filterModel);
+const header = new HeaderPresenter(tripMain, pointsModel, filterModel);
 
 Promise.all([
   api.getData(`/destinations`).then((dest) => pointsModel.setData(`destinations`, dest)).catch(() => pointsModel.setData(`destinations`, [])),
@@ -28,8 +30,10 @@ Promise.all([
   api.getPoints().then((points) => pointsModel.setPoints(points)).catch(() => pointsModel.setPoints([])),
 ]).then(() => {
   trip.init();
-  render(tripMain, new Header(pointsModel, filterModel), RenderPosition.AFTERBEGIN);
+  stats.init();
+  header.init();
 
+  render(tripControls, new Menu(trip, stats), RenderPosition.AFTERBEGIN);
 });
 
 

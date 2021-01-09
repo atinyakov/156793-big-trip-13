@@ -3,7 +3,7 @@ const customParseFormat = require(`dayjs/plugin/customParseFormat`);
 dayjs.extend(customParseFormat);
 import Smart from './smart';
 import flatpickr from "flatpickr";
-import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/flatpickr.min.css";
 
 
 const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
@@ -259,8 +259,7 @@ export default class Editor extends Smart {
   _setInnerHandlers() {
     this.getElement().querySelector(`.event__type-group`).addEventListener(`change`, this._typeHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityHandler);
-    this.getElement().querySelector(`#event-start-time`).addEventListener(`keyup`, this._startDateHandler);
-    this.getElement().querySelector(`#event-end-time`).addEventListener(`keyup`, this._endDateHandler);
+
     this.getElement().querySelector(`#event-price`).addEventListener(`change`, this._priceHandler);
     this.getElement().querySelector(`.event__available-offers`).addEventListener(`change`, this._offerHandler);
   }
@@ -269,7 +268,9 @@ export default class Editor extends Smart {
     if (this._startDatepicker) {
       this._startDatepicker.destroy();
       this._startDatepicker = null;
+    }
 
+    if (this._endDatepicker) {
       this._endDatepicker.destroy();
       this._endDatepicker = null;
     }
@@ -277,6 +278,7 @@ export default class Editor extends Smart {
     this._startDatepicker = flatpickr(
         this.getElement().querySelector(`#event-start-time`),
         {
+          enableTime: true,
           dateFormat: `d/m/y H:i`, // DD/MM/YY HH:mm
           defaultDate: this._data.startDate,
           onChange: this._startDateHandler
@@ -286,6 +288,7 @@ export default class Editor extends Smart {
     this._endDatepicker = flatpickr(
         this.getElement().querySelector(`#event-end-time`),
         {
+          enableTime: true,
           dateFormat: `d/m/y H:i`, // DD/MM/YY HH:mm
           defaultDate: this._data.startDate,
           onChange: this._endDateHandler

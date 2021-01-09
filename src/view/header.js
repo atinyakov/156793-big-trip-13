@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
-import Abstract from './abstract';
+import Smart from './smart';
+
 
 const createHeader = (points) => {
   const cost = points.length ? points.reduce((acc, {price})=> {
@@ -29,15 +30,16 @@ const createHeader = (points) => {
 </section>`;
 };
 
-export default class Header extends Abstract {
-  constructor(pointsModel, filterModel) {
+export default class Header extends Smart {
+  constructor(data) {
     super();
-    this.pointsModel = pointsModel;
-    this._data = pointsModel.getPoints(filterModel.getFilter());
-    // this.pointsModel.subscribe(this.updateHeader);
+    this._data = data;
   }
 
   getTemplate() {
     return createHeader(this._data);
+  }
+
+  restoreHandlers() {
   }
 }

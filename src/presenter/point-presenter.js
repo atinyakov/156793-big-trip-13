@@ -53,6 +53,7 @@ export default class PointPresenter {
         return;
       }
 
+      this._closeEditor();
     });
 
     this._pointEditorComponent.setSubmitHandler((data) => {

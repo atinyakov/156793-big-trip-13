@@ -1,0 +1,36 @@
+import Stats from '../view/stats';
+import {render, RenderPosition} from '../helpers/utils';
+
+export default class StatsPresenter {
+  constructor(container, pointsModel, filterModel) {
+    this._container = container;
+    this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
+
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._pointsModel.subscribe(this._handleModelEvent);
+  }
+
+  init() {
+    this._points = this._pointsModel.getPoints(this._filterModel.getFilter());
+    this._elem = new Stats(this._points);
+    this.render();
+  }
+
+  render() {
+    render(this._container, this._elem, RenderPosition.BEFOREEND);
+  }
+
+  show() {
+    this._container.querySelector(`.statistics`).classList.remove(`statistics--hidden`);
+  }
+
+  hide() {
+    this._container.querySelector(`.statistics`).classList.add(`statistics--hidden`);
+  }
+
+  _handleModelEvent() {
+    this._elem._updateData(this._pointsModel.getPoints(this._filterModel.getFilter()));
+    this._elem._setCharts();
+  }
+}

@@ -30,6 +30,7 @@ export const render = (target, markup, place) => {
       break;
   }
 };
+
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;

@@ -142,10 +142,17 @@ export default class TripPresenter {
     this._pointObserver.run((el) => {
       el.destroy();
     });
+
     this._newPoint = undefined;
-
     this._empty.getElement().remove();
-
     this._pointObserver.clear();
+  }
+
+  show() {
+    this._container.classList.remove(`trip-events--hidden`);
+  }
+
+  hide() {
+    this._container.classList.add(`trip-events--hidden`);
   }
 }
