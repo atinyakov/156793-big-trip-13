@@ -3,10 +3,6 @@ import {replace} from '../helpers/utils';
 
 
 export default class Smart extends Abstract {
-  restoreHandlers() {
-    throw new Error(`You should implement method on instance`);
-  }
-
   _updateElement() {
     const oldEl = this.getElement();
     this.removeElement();
@@ -14,9 +10,6 @@ export default class Smart extends Abstract {
     const newEl = this.getElement();
 
     replace(newEl, oldEl);
-
-
-    this.restoreHandlers();
   }
 
 

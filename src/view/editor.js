@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 const customParseFormat = require(`dayjs/plugin/customParseFormat`);
 dayjs.extend(customParseFormat);
-import Smart from './smart';
+import SmartWithHandlers from './smart-with-handlers';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import {isOnline} from '../helpers/utils';
@@ -41,12 +41,11 @@ const createEditor = ({
         `<img class="event__photo" src="${src}" alt="${alt}">`);
   }, ``);
 
-
   const typesData = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
   const types = typesData.reduce((acc, data) => {
     return acc.concat(
         `<div class="event__type-item">
-        <input ${isDisabled && `disabled`} id="event-type-${data}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${data}" ${type === derivedType(data)
+        <input ${isDisabled && `disabled`} id="event-type-${data}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${data}" ${type === data
            && `checked`}>
         <label class="event__type-label  event__type-label--${data}" for="event-type-${data}">${derivedType(data)}</label>
       </div>`
@@ -123,7 +122,7 @@ const createEditor = ({
 </li>`;
 };
 
-export default class Editor extends Smart {
+export default class Editor extends SmartWithHandlers {
   constructor(data, mode, offersByType, destinations) {
     super();
     this._offersByType = offersByType;

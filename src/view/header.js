@@ -39,7 +39,4 @@ export default class Header extends Smart {
   getTemplate() {
     return createHeader(this._data);
   }
-
-  restoreHandlers() {
-  }
 }

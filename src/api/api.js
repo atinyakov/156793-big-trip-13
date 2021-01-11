@@ -1,6 +1,4 @@
-const API_CODES = {
-  OK: 200
-};
+import {API_CODES} from '../mock/constants';
 export default class API {
   constructor(url, auth) {
     this._url = url;

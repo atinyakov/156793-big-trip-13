@@ -1,5 +1,6 @@
 import {isOnline} from '../helpers/utils';
 import toast from "../helpers/toast/toast.js";
+import {API_CODES} from '../mock/constants';
 
 export default class Provider {
   constructor(api, store) {
@@ -43,33 +44,21 @@ export default class Provider {
     this._store.updateItem(update);
     this._needSync = true;
 
-    return Promise.resolve(Object.assign(update, {status: 200}));
+    return Promise.resolve(Object.assign(update, {status: API_CODES.OK}));
   }
 
   createData(update) {
-    if (isOnline()) {
-      const created = this._api.createData(update);
-      created.then((dataFromServer) => this._store.addItem(dataFromServer));
+    const created = this._api.createData(update);
+    created.then((dataFromServer) => this._store.addItem(dataFromServer));
 
-      return created;
-    }
-    this._store.addItem(update);
-    this._needSync = true;
-
-    return Promise.resolve(Object.assign(update, {status: 200}));
+    return created;
   }
 
   deleteData(update) {
-    if (isOnline()) {
-      const created = this._api.createData(update);
-      created.then((dataFromServer) => this._store.removeItem(dataFromServer));
+    const created = this._api.createData(update);
+    created.then((dataFromServer) => this._store.removeItem(dataFromServer));
 
-      return created;
-    }
-    this._store.removeItem(update);
-    this._needSync = true;
-
-    return Promise.resolve(Object.assign(update, {status: 200}));
+    return created;
   }
 
   get needSync() {

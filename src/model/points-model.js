@@ -1,7 +1,6 @@
 import Observer from '../helpers/observers';
 import dayjs from "dayjs";
-import {FILTER_TYPE, UPDATE_TYPE} from '../mock/constants';
-
+import {FILTER_TYPE, UPDATE_TYPE, API_CODES} from '../mock/constants';
 export default class PointsModel extends Observer {
   constructor(api) {
     super();
@@ -54,7 +53,7 @@ export default class PointsModel extends Observer {
 
     this.api.updateData(update)
     .then((res) => {
-      if (res.status === 200) {
+      if (res.status === API_CODES.OK) {
         this.setPoints(this.points = this.points.map((point) => {
           return point.id === update.id ? update : point;
         }));
@@ -80,7 +79,7 @@ export default class PointsModel extends Observer {
   deletePoint(point) {
     this.api.deleteData(point)
     .then((res) => {
-      if (res.status === 200) {
+      if (res.status === API_CODES.OK) {
         this.setPoints(this.points.filter((el) => el.id !== point.id), true);
 
         return;

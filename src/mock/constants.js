@@ -10,12 +10,6 @@ export const SORT_TYPE = {
   PRICE: `sort-price`,
 };
 
-export const USER_ACTION = {
-  UPDATE_POINT: `UPDATE_POINT`,
-  ADD_POINT: `ADD_POINT`,
-  DELETE_POINT: `DELETE_POINT`
-};
-
 export const UPDATE_TYPE = {
   PATCH: `PATCH`,
   MAJOR: `MAJOR`
@@ -25,4 +19,8 @@ export const MODE = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`,
   ADD: `ADD`
+};
+
+export const API_CODES = {
+  OK: 200
 };

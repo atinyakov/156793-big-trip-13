@@ -162,9 +162,6 @@ export default class Stats extends Smart {
       text: `TIME`,
     });
   }
-
-  restoreHandlers() {
-  }
 }
 
 

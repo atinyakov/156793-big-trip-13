@@ -46,8 +46,4 @@ export default class Store {
         JSON.stringify(store.filter((el) => el.id !== item.id))
     );
   }
-
-  remove(key = this._key) {
-    this._localStorage.removeItem(key);
-  }
 }
