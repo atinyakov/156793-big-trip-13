@@ -6,7 +6,9 @@ import TripPresenter from './presenter/trip-presenter';
 import StatsPresenter from './presenter/stats-presenter';
 import HeaderPresenter from './presenter/header-presenter';
 
-import API from './api';
+import API from './api/api';
+import Store from './api/store';
+import ApiProvider from './api/provider';
 const URL = `https://13.ecmascript.pages.academy/big-trip`;
 
 
@@ -16,7 +18,9 @@ const tripSorting = document.querySelector(`.trip-events`);
 const tripStats = document.querySelector(`main .page-body__container`);
 
 const api = new API(URL, `eo0w590ik298123`);
-const pointsModel = new PointsModel(api);
+const store = new Store(`/points`, window.localStorage);
+const apiWithProvider = new ApiProvider(api, store);
+const pointsModel = new PointsModel(apiWithProvider);
 const filterModel = new FilterModel();
 
 
@@ -25,9 +29,9 @@ const stats = new StatsPresenter(tripStats, pointsModel, filterModel);
 const header = new HeaderPresenter(tripMain, pointsModel, filterModel);
 
 Promise.all([
-  api.getData(`/destinations`).then((dest) => pointsModel.setData(`destinations`, dest)).catch(() => pointsModel.setData(`destinations`, [])),
-  api.getData(`/offers`).then((offers) => pointsModel.setData(`offers`, offers)).catch(() => pointsModel.setData(`offers`, [])),
-  api.getPoints().then((points) => pointsModel.setPoints(points)).catch(() => pointsModel.setPoints([])),
+  apiWithProvider.getData(`/destinations`).then((dest) => pointsModel.setData(`destinations`, dest)).catch(() => pointsModel.setData(`destinations`, [])),
+  apiWithProvider.getData(`/offers`).then((offers) => pointsModel.setData(`offers`, offers)).catch(() => pointsModel.setData(`offers`, [])),
+  apiWithProvider.getPoints().then((points) => pointsModel.setPoints(points)).catch(() => pointsModel.setPoints([])),
 ]).then(() => {
   trip.init();
   stats.init();
@@ -40,4 +44,8 @@ Promise.all([
 const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
 addEventBtn.addEventListener(`click`, () => {
   trip.initNewPoint();
+});
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
 });

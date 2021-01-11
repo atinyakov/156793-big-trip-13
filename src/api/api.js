@@ -98,4 +98,16 @@ export default class API {
           headers: method !== `GET` ? Object.assign({}, {'Authorization': `Basic ${this._auth}`, 'Content-Type': `application/json;charset=UTF-8`}) : {'Authorization': `Basic ${this._auth}`},
           body: body && JSON.stringify(body)});
   }
+
+  sync(body) {
+    // return this._load({
+    //   url: `tasks/sync`,
+    //   method: Method.POST,
+    //   body: JSON.stringify(data),
+    //   headers: new Headers({"Content-Type": `application/json`})
+    // })
+    //   .then(Api.toJSON);
+
+    return this._client(`/points/sync`, {method: `POST`, body});
+  }
 }

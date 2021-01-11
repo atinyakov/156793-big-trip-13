@@ -13,5 +13,5 @@ node_modules/
 .prettierrc
 
 # Собранные файлы (допишите самостоятельно)
-public/**/*.js.map
-public/**/*.js
+public/**/bundle.js.map
+public/**/bundle.js

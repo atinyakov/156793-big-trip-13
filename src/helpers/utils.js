@@ -51,3 +51,7 @@ export const replace = (newChild, oldChild) => {
 
   parent.replaceChild(newChild, oldChild);
 };
+
+export const isOnline = () => {
+  return window.navigator.onLine;
+};
