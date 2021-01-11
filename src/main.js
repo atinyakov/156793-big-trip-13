@@ -5,6 +5,8 @@ import Menu from "./view/menu";
 import TripPresenter from './presenter/trip-presenter';
 import StatsPresenter from './presenter/stats-presenter';
 import HeaderPresenter from './presenter/header-presenter';
+import {isOnline} from './helpers/utils';
+import toast from "./helpers/toast/toast.js";
 
 import API from './api/api';
 import Store from './api/store';
@@ -43,9 +45,24 @@ Promise.all([
 
 const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
 addEventBtn.addEventListener(`click`, () => {
+  if (!isOnline()) {
+    toast(`You can't create new task offline`);
+    return;
+  }
   trip.initNewPoint();
 });
 
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`);
+});
+
+window.addEventListener(`online`, () => {
+  toast(`You are online.`);
+  if (apiWithProvider.needSync) {
+    apiWithProvider.sync();
+  }
+});
+
+window.addEventListener(`offline`, () => {
+  toast(`You are offline. You can only add to favorite`);
 });

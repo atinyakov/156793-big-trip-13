@@ -4,7 +4,6 @@ import Editor from "../view/editor";
 import {MODE, UPDATE_TYPE} from '../mock/constants';
 import {render, RenderPosition, replace} from '../helpers/utils';
 
-
 export default class PointPresenter {
   constructor(container, pointsModel, resetPoints, filterModel) {
     this._container = container;
@@ -18,14 +17,17 @@ export default class PointPresenter {
   }
 
   init(point, mode = this._mode) {
-    this._point = point;
     this._mode = mode;
+    this._point = point;
 
     const oldPoint = this._pointComponent;
     const oldEditor = this._pointEditorComponent;
 
-    this._pointComponent = new Point(point, this._pointsModel.getData(`offers`));
-    this._pointEditorComponent = new Editor(point, mode, this._pointsModel.getData(`offers`), this._pointsModel.getData(`destinations`));
+    const destinations = this._pointsModel.getData(`destinations`);
+    const offers = this._pointsModel.getData(`offers`);
+
+    this._pointComponent = new Point(point, offers, destinations);
+    this._pointEditorComponent = new Editor(point, mode, offers, destinations);
 
     this._pointComponent.setRollupHandler(() => {
       this._resetPoints();
@@ -35,8 +37,8 @@ export default class PointPresenter {
       this._mode = MODE.EDITING;
     });
 
-    this._pointComponent.setFavoriteHandler(() => {
-      this._pointsModel.updatePoint(UPDATE_TYPE.PATCH, Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}));
+    this._pointComponent.setFavoriteHandler((pointData) => {
+      this._pointsModel.updatePoint(UPDATE_TYPE.PATCH, Object.assign({}, pointData, {isFavorite: !this._point.isFavorite}));
     });
 
     this._pointEditorComponent.setClickHandler(() => {

@@ -38,14 +38,12 @@ export default class Store {
     );
   }
 
-  removeItem(key = this._key) {
-    const store = this.getItems(key);
+  removeItem(item) {
+    const store = this.getItems(this._key);
 
-    delete store[key];
-
-    this._localStorage.setItem(
-        key,
-        JSON.stringify(store)
+    this._localStorage.setItems(
+        this._key,
+        JSON.stringify(store.filter((el) => el.id !== item.id))
     );
   }
 

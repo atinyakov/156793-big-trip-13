@@ -99,15 +99,28 @@ export default class API {
           body: body && JSON.stringify(body)});
   }
 
-  sync(body) {
-    // return this._load({
-    //   url: `tasks/sync`,
-    //   method: Method.POST,
-    //   body: JSON.stringify(data),
-    //   headers: new Headers({"Content-Type": `application/json`})
-    // })
-    //   .then(Api.toJSON);
+  _getSyncedTasks(items) {
+    return items.filter(({success}) => success)
+      .map(({payload}) => {
+        return payload.point;
+      });
+  }
 
-    return this._client(`/points/sync`, {method: `POST`, body});
+  sync(points) {
+    const body = points.map((point) => this._mapToServer(point));
+
+    return this._client(`/points/sync`, {method: `POST`, body})
+    .then((res) => res.json())
+    .then(({c, u, d}) => {
+      return Promise.all([
+        this._mapToClient(this._getSyncedTasks(c)),
+        this._mapToClient(this._getSyncedTasks(u)),
+        this._mapToClient(this._getSyncedTasks(d))
+      ]).then(({updated, created, deleted}) => ({
+        updated,
+        created,
+        deleted
+      }));
+    });
   }
 }

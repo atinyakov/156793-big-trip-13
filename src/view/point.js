@@ -64,9 +64,13 @@ const createTemplate = ({
 };
 
 export default class Point extends Abstract {
-  constructor(data, offerByType) {
+  constructor(data, offerByType, destinations) {
     super();
-    this._data = data;
+    this._data = Object.assign({},
+        data,
+        {
+          pictures: destinations.find((el) => el.name === (data.destination || destinations[0].name)).pictures
+        });
     this._offerByType = offerByType;
     this._callback = {};
   }
@@ -84,7 +88,7 @@ export default class Point extends Abstract {
   _favoriteHandler(e) {
     e.preventDefault();
 
-    this._callback.favorite();
+    this._callback.favorite(this._data);
   }
 
   setRollupHandler(cb) {

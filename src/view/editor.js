@@ -4,6 +4,8 @@ dayjs.extend(customParseFormat);
 import Smart from './smart';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import {isOnline} from '../helpers/utils';
+import toast from "../helpers/toast/toast.js";
 
 
 const derivedType = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
@@ -176,6 +178,11 @@ export default class Editor extends Smart {
 
   _submitHandler(e, data) {
     e.preventDefault();
+    if (!isOnline()) {
+      toast(`You can't save or edit task offline`);
+      return;
+    }
+
     this._updateData(Object.assign({}, data, {isSaving: true, hasError: false}));
 
     this._callback.submit(data);
@@ -183,6 +190,11 @@ export default class Editor extends Smart {
 
   _deleteHandler(e) {
     e.preventDefault();
+    if (!isOnline()) {
+      toast(`You can't delete task offline`);
+      return;
+    }
+
     this._updateData(Object.assign({}, this._data, {isDeleting: true, hasError: false}));
 
     this._callback.delete(this._data);
@@ -244,8 +256,6 @@ export default class Editor extends Smart {
     const form = this.getElement().querySelector(`form`);
 
     form.addEventListener(`submit`, (e) => {
-      e.preventDefault();
-
       this._submitHandler(e, this._data);
     });
   }
