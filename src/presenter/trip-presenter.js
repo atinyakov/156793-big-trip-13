@@ -16,7 +16,6 @@ export default class TripPresenter {
     this._filterModel = filterModel;
     this._pointObserver = new Observers();
     this._empty = new Empty();
-    // this._currentSortType = SORT_TYPE.DAY;
     this.resetPoints = this._resetPoints.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 

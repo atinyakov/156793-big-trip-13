@@ -9,7 +9,7 @@ export default class FilterModel extends Observer {
 
   setFilter(filter) {
     this._filter = filter;
-    this.notify(); // только что
+    this.notify();
   }
 
   getFilter() {
