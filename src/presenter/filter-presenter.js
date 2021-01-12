@@ -1,6 +1,6 @@
+import dayjs from "dayjs";
 import Filters from "../view/filters";
 import {render, RenderPosition} from '../helpers/utils';
-
 export default class FilterPresenter {
   constructor(container, pointsModel, filterModel) {
     this._container = container;
@@ -11,7 +11,19 @@ export default class FilterPresenter {
   }
 
   init() {
-    this._filters = new Filters(this._filterModel.getFilter());
+    const currentFilter = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints(currentFilter);
+    const config = {
+      hasFuture: [...points].filter((a) => {
+        return dayjs().diff(a.endTime, `m`) < 0;
+      }).length,
+      hasPast: [...points].filter((a) => {
+        return dayjs().diff(a.endTime, `m`) > 0;
+      }).length,
+    };
+
+    this._filters = new Filters(currentFilter, config);
+
 
     this.renderFilters();
   }

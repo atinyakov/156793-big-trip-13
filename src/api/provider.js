@@ -24,7 +24,9 @@ export default class Provider {
   getData(querry) {
     if (isOnline()) {
       const data = this._api.getData(querry);
-      data.then((dataFromServer) => this._store.setItems(dataFromServer, querry));
+      data
+      .then((dataFromServer) => this._store.setItems(dataFromServer, querry))
+      .catch((e) => new Error(`Can't update localstorage: ${e.message}`));
 
       return data;
     }
@@ -48,17 +50,28 @@ export default class Provider {
   }
 
   createData(update) {
-    const created = this._api.createData(update);
-    created.then((dataFromServer) => this._store.addItem(dataFromServer));
+    if (isOnline()) {
+      const created = this._api.createData(update);
+      created
+      .then((dataFromServer) => this._store.addItem(dataFromServer))
+      .catch((e) => new Error(`Can't update localstorage: ${e.message}`));
 
-    return created;
+      return created;
+    }
+    return Promise.reject(`Cant create in offline`);
   }
 
   deleteData(update) {
-    const created = this._api.createData(update);
-    created.then((dataFromServer) => this._store.removeItem(dataFromServer));
+    if (isOnline()) {
 
-    return created;
+      const created = this._api.deleteData(update);
+      created
+      .then((dataFromServer) => this._store.removeItem(dataFromServer))
+      .catch((e) => new Error(`Can't update localstorage: ${e.message}`));
+
+      return created;
+    }
+    return Promise.reject(`Cant delete in offline`);
   }
 
   get needSync() {

@@ -103,12 +103,12 @@ const createEditor = ({
       </button>
     </header>
     <section class="event__details">
-      <section class="event__section  event__section--offers">
+      ${currentTypeData.offers.length ? `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${offersMarkup}
         </div>
-      </section>
+      </section>` : ``}
 
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -211,16 +211,12 @@ export default class Editor extends SmartWithHandlers {
     this._updateData({destination: e.target.value});
   }
 
-  _startDateHandler(e) {
-    e.preventDefault();
-
-    this._updateData({startTime: dayjs(e.target.value, `DD/MM/YY HH:mm`).toISOString()}, true);
+  _startDateHandler(_, dateStr) {
+    this._updateData({startTime: dayjs(dateStr, `DD/MM/YY HH:mm`).toISOString()}, true);
   }
 
-  _endDateHandler(e) {
-    e.preventDefault();
-
-    this._updateData({endTime: dayjs(e.target.value, `DD/MM/YY HH:mm`).toISOString()}, true);
+  _endDateHandler(_, dateStr) {
+    this._updateData({endTime: dayjs(dateStr, `DD/MM/YY HH:mm`).toISOString()}, true);
   }
 
   _priceHandler(e) {
@@ -270,7 +266,10 @@ export default class Editor extends SmartWithHandlers {
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityHandler);
 
     this.getElement().querySelector(`#event-price`).addEventListener(`change`, this._priceHandler);
-    this.getElement().querySelector(`.event__available-offers`).addEventListener(`change`, this._offerHandler);
+    const offersMarkup = this.getElement().querySelector(`.event__available-offers`);
+    if (offersMarkup !== null) {
+      offersMarkup.addEventListener(`change`, this._offerHandler);
+    }
   }
 
   _setDatePicker() {

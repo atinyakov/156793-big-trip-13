@@ -21,7 +21,7 @@ const createHeader = (points) => {
   <div class="trip-info__main">
     <h1 class="trip-info__title">${title()}</h1>
 
-    <p class="trip-info__dates">${points.length ? dayjs(points[0].startDate).format(`MMM D`) : ``} &nbsp; &mdash;&nbsp;${points.length ? dayjs(points[points.length - 1].startDate).format(`MMM D`) : ``}</p>
+    <p class="trip-info__dates">${points.length ? dayjs(points[0].startTime).format(`MMM D`) : ``} &nbsp; &mdash;&nbsp;${points.length ? dayjs(points[points.length - 1].endTime).format(`MMM D`) : ``}</p>
   </div>
 
   <p class="trip-info__cost">
