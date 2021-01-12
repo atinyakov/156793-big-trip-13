@@ -1,4 +1,4 @@
-import Abstract from './abstract';
+import SmartWithHandlers from './smart-with-handlers';
 
 export const createSorting = () => {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -30,18 +30,27 @@ export const createSorting = () => {
 };
 
 
-export default class Sorting extends Abstract {
+export default class Sorting extends SmartWithHandlers {
+  constructor() {
+    super();
+    this._changeSort = this._changeSort.bind(this);
+  }
+
   getTemplate() {
     return createSorting();
   }
 
-  setHandler(cb) {
-    this._cb = cb;
-
-    this.getElement().addEventListener(`change`, (e) => {
-      e.preventDefault();
-      this._cb(e.target.value);
-    });
+  _changeSort(e) {
+    e.preventDefault();
+    this._cb(e.target.value);
   }
 
+  setHandler(cb) {
+    this._cb = cb;
+    this.getElement().addEventListener(`change`, this._changeSort);
+  }
+
+  restoreHandlers() {
+    this.setHandler(this._cb);
+  }
 }

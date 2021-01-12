@@ -20,6 +20,8 @@ export default class Smart extends Abstract {
 
     if (Array.isArray(this._data)) {
       this._data = update;
+    } else if (typeof this._data === `string`) {
+      this._data = update;
     } else {
       this._data = Object.assign({}, this._data, update);
     }

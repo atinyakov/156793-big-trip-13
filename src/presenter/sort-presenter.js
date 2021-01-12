@@ -3,16 +3,20 @@ import {render, RenderPosition} from '../helpers/utils';
 import {SORT_TYPE} from '../mock/constants';
 
 export default class SortingPresenter {
-  constructor(container) {
+  constructor(container, filterModel) {
     this._container = container;
     this.currentValue = SORT_TYPE.DAY;
+    this._filterModel = filterModel;
+
+    this.handleModelEvent = this.handleModelEvent.bind(this);
+    this._filterModel.subscribe(this.handleModelEvent);
   }
 
   init() {
-    this._component = new Sorting();
+    this._elem = new Sorting();
 
     this.render();
-    this._component.setHandler((data) => this.setCurrentValue(data));
+    this._elem.setHandler((data) => this.setCurrentValue(data));
   }
 
   setHandler(cb) {
@@ -24,7 +28,7 @@ export default class SortingPresenter {
   }
 
   setCurrentValue(data) {
-    if (this._currentValue === data) {
+    if (this.currentValue === data) {
       return;
     }
 
@@ -33,6 +37,10 @@ export default class SortingPresenter {
   }
 
   render() {
-    render(this._container, this._component, RenderPosition.AFTERBEGIN);
+    render(this._container, this._elem, RenderPosition.AFTERBEGIN);
+  }
+
+  handleModelEvent() {
+    this._elem._updateData(this.currentValue);
   }
 }

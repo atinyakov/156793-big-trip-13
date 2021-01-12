@@ -3,7 +3,7 @@ import Empty from "../view/empty";
 import PointPresenter from './point-presenter';
 import FilterPresenter from './filter-presenter';
 import SortingPresenter from './sort-presenter';
-import {SORT_TYPE, UPDATE_TYPE, MODE} from '../mock/constants';
+import {SORT_TYPE, UPDATE_TYPE, MODE, FILTER_TYPE} from '../mock/constants';
 
 import {render, RenderPosition} from '../helpers/utils';
 import Observers from '../helpers/observers';
@@ -16,7 +16,7 @@ export default class TripPresenter {
     this._filterModel = filterModel;
     this._pointObserver = new Observers();
     this._empty = new Empty();
-    this._currentSortType = SORT_TYPE.DAY;
+    // this._currentSortType = SORT_TYPE.DAY;
     this.resetPoints = this._resetPoints.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
@@ -35,7 +35,7 @@ export default class TripPresenter {
   }
 
   _renderSorting(target) {
-    this._sorting = new SortingPresenter(target);
+    this._sorting = new SortingPresenter(target, this._filterModel);
     this._sorting.init();
 
     this._sorting.setHandler(() => {
@@ -50,6 +50,11 @@ export default class TripPresenter {
     }
 
     this. _resetPoints();
+    this._sorting.setCurrentValue(SORT_TYPE.DAY);
+    this._sorting.handleModelEvent();
+    this._filterModel.setFilter(FILTER_TYPE.EVERYTHING);
+    this._filters.handleFilterChange();
+
     this._newPoint = new PointPresenter(this._newPointContainer, this._pointsModel, this.resetPoints, this._filterModel);
     this._newPoint.init({}, MODE.ADD);
     this._pointObserver.subscribe(this._newPoint);
@@ -74,7 +79,6 @@ export default class TripPresenter {
         break;
       case UPDATE_TYPE.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
-        // this._clearBoard({resetRenderedTaskCount: true, resetSortType: true})
         this._resetPoints();
         this._clearTrip();
         this._renderTrip();
@@ -83,10 +87,12 @@ export default class TripPresenter {
   }
 
   _renderFilters(target) {
-    const filters = new FilterPresenter(target, this._pointsModel, this._filterModel);
+    this._filters = new FilterPresenter(target, this._pointsModel, this._filterModel);
 
-    filters.init();
-    filters.setFilterHandler(() => {
+    this._filters.init();
+    this._filters.setFilterHandler(() => {
+      this._sorting.setCurrentValue(SORT_TYPE.DAY);
+
       this._clearTrip();
       this._renderTrip();
     });
@@ -110,7 +116,7 @@ export default class TripPresenter {
         break;
       case SORT_TYPE.TIME:
         this._points = this._points.sort((a, b) => {
-          return dayjs(a.startTime).diff(a.endTime, `m`) - dayjs(b.startTime).diff(b.endTime, `m`) < 0 ? -1 : 1;
+          return dayjs(a.startTime).diff(a.endTime, `m`) - dayjs(b.startTime).diff(b.endTime, `m`) > 0 ? -1 : 1;
         });
         break;
       case SORT_TYPE.PRICE:
@@ -150,9 +156,13 @@ export default class TripPresenter {
 
   show() {
     this._container.classList.remove(`trip-events--hidden`);
+    this._renderTrip();
   }
 
   hide() {
     this._container.classList.add(`trip-events--hidden`);
+    this._sorting.setCurrentValue(SORT_TYPE.DAY);
+    this._sorting.handleModelEvent();
+    this._clearTrip();
   }
 }

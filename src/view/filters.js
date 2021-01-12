@@ -1,4 +1,4 @@
-import Abstract from './abstract';
+import SmartWithHandlers from './smart-with-handlers';
 
 const createFilters = (filter) => {
   return `<form class="trip-filters" action="#" method="get">
@@ -21,15 +21,16 @@ const createFilters = (filter) => {
   </form>`;
 };
 
-export default class Filters extends Abstract {
-  constructor() {
+export default class Filters extends SmartWithHandlers {
+  constructor(currentFilter) {
     super();
+    this._filter = currentFilter;
     this._callbacks = {};
     this._changeFilterHandler = this._changeFilterHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilters();
+    return createFilters(this._filter);
   }
 
   _changeFilterHandler(e) {
@@ -42,5 +43,9 @@ export default class Filters extends Abstract {
     this._callbacks.click = cb;
 
     this.getElement().addEventListener(`change`, this._changeFilterHandler);
+  }
+
+  restoreHandlers() {
+    this.setFilterHandler(this._callbacks.click);
   }
 }

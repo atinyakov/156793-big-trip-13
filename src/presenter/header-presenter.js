@@ -21,7 +21,6 @@ export default class StatsPresenter {
   }
 
   _handleModelEvent() {
-    // console.log(this._pointsModel.getPoints(this._filterModel.getFilter()));
     this._elem._updateData(this._pointsModel.getPoints(this._filterModel.getFilter()));
   }
 }
