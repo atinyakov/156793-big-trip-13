@@ -52,9 +52,9 @@ addEventBtn.addEventListener(`click`, () => {
   trip.initNewPoint();
 });
 
-// window.addEventListener(`load`, () => {
-//   navigator.serviceWorker.register(`/sw.js`);
-// });
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
 
 window.addEventListener(`online`, () => {
   toast(`You are online.`);
