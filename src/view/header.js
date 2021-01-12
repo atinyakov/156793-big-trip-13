@@ -3,8 +3,10 @@ import Smart from './smart';
 
 
 const createHeader = (points) => {
-  const cost = points.length ? points.reduce((acc, {price})=> {
-    return acc + +price;
+  const cost = points.length ? points.reduce((acc, {price, offers})=> {
+    const offersPrice = offers.reduce((offAcc, el) => offAcc + +el.price, 0);
+
+    return acc + +price + offersPrice;
   }, 0) : 0;
 
   const title = () => {
