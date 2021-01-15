@@ -1,6 +1,6 @@
 import Observer from '../helpers/observers';
 import dayjs from "dayjs";
-import {FILTER_TYPE, UPDATE_TYPE, API_CODES} from '../mock/constants';
+import {FilterType, UpdateType, ApiCodes} from '../mock/constants';
 export default class PointsModel extends Observer {
   constructor(api) {
     super();
@@ -11,7 +11,7 @@ export default class PointsModel extends Observer {
   setPoints(points, update = false) {
     this.points = [...points];
     if (update) {
-      this.notify(UPDATE_TYPE.MAJOR);
+      this.notify(UpdateType.MAJOR);
     }
   }
 
@@ -29,15 +29,15 @@ export default class PointsModel extends Observer {
   getPoints(filter) {
     let data;
     switch (filter) {
-      case FILTER_TYPE.EVERYTHING:
+      case FilterType.EVERYTHING:
         data = this.points;
         break;
-      case FILTER_TYPE.FUTURE:
+      case FilterType.FUTURE:
         data = this.points.filter((point) => {
           return dayjs(point.endTime).diff(dayjs()) > 0;
         });
         break;
-      case FILTER_TYPE.PAST:
+      case FilterType.PAST:
         data = this.points.filter((point) => {
           return dayjs(point.endTime).diff(dayjs()) < 0;
         });
@@ -47,13 +47,13 @@ export default class PointsModel extends Observer {
 
   updatePoint(updateType, update) {
     if (update.id === undefined) {
-      this.notify(UPDATE_TYPE.MAJOR);
+      this.notify(UpdateType.MAJOR);
       return;
     }
 
     this.api.updateData(update)
     .then((res) => {
-      if (res.status === API_CODES.OK) {
+      if (res.status === ApiCodes.OK) {
         this.setPoints(this.points = this.points.map((point) => {
           return point.id === update.id ? update : point;
         }));
@@ -61,7 +61,7 @@ export default class PointsModel extends Observer {
       }
     })
     .catch(() => {
-      this.notify(UPDATE_TYPE.PATCH, Object.assign(update, {hasError: true}));
+      this.notify(UpdateType.PATCH, Object.assign(update, {hasError: true}));
     });
   }
 
@@ -72,14 +72,14 @@ export default class PointsModel extends Observer {
       this.setPoints([...this.points, ...updatedPoint], true);
     })
     .catch(() => {
-      this.notify(UPDATE_TYPE.PATCH, Object.assign(point, {hasError: true}));
+      this.notify(UpdateType.PATCH, Object.assign(point, {hasError: true}));
     });
   }
 
   deletePoint(point) {
     this.api.deleteData(point)
     .then((res) => {
-      if (res.status === API_CODES.OK) {
+      if (res.status === ApiCodes.OK) {
         this.setPoints(this.points.filter((el) => el.id !== point.id), true);
 
         return;
@@ -87,7 +87,7 @@ export default class PointsModel extends Observer {
       throw new Error(`Cant delete point`);
     })
     .catch(() => {
-      this.notify(UPDATE_TYPE.PATCH, Object.assign(point, {hasError: true}));
+      this.notify(UpdateType.PATCH, Object.assign(point, {hasError: true}));
     });
   }
 }

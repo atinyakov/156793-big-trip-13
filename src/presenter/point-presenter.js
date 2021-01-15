@@ -1,7 +1,7 @@
 import Point from "../view/point";
 import Editor from "../view/editor";
 
-import {MODE, UPDATE_TYPE} from '../mock/constants';
+import {Mode, UpdateType} from '../mock/constants';
 import {render, RenderPosition, replace} from '../helpers/utils';
 
 export default class PointPresenter {
@@ -10,9 +10,9 @@ export default class PointPresenter {
     this._pointsModel = pointsModel;
     this._resetPoints = resetPoints;
     this._filterModel = filterModel;
-    this._mode = MODE.EDITING;
-    this._closeEditor = this._closeEditor.bind(this);
-    this._closeEditorByEsc = this._closeEditorByEsc.bind(this);
+    this._mode = Mode.EDITING;
+    this._editorCloseHandler = this._editorCloseHandler.bind(this);
+    this._editorCloseByEscHandler = this._editorCloseByEscHandler.bind(this);
     this.getPointData = this.getPointData.bind(this);
   }
 
@@ -33,19 +33,19 @@ export default class PointPresenter {
       this._resetPoints();
 
       replace(this._pointEditorComponent, this._pointComponent);
-      document.addEventListener(`keydown`, this._closeEditorByEsc);
-      this._mode = MODE.EDITING;
+      document.addEventListener(`keydown`, this._editorCloseByEscHandler);
+      this._mode = Mode.EDITING;
     });
 
     this._pointComponent.setFavoriteHandler((pointData) => {
-      this._pointsModel.updatePoint(UPDATE_TYPE.PATCH, Object.assign({}, pointData, {isFavorite: !this._point.isFavorite}));
+      this._pointsModel.updatePoint(UpdateType.PATCH, Object.assign({}, pointData, {isFavorite: !this._point.isFavorite}));
     });
 
     this._pointEditorComponent.setClickHandler(() => {
       document.removeEventListener(`keydown`, this.closeEditorByEsc);
 
-      if (this._mode === MODE.ADD) {
-        this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, this._point);
+      if (this._mode === Mode.ADD) {
+        this._pointsModel.updatePoint(UpdateType.MAJOR, this._point);
         return;
       }
 
@@ -55,16 +55,16 @@ export default class PointPresenter {
         return;
       }
 
-      this._closeEditor();
+      this._editorCloseHandler();
     });
 
     this._pointEditorComponent.setSubmitHandler((data) => {
-      if (this._mode === MODE.ADD) {
+      if (this._mode === Mode.ADD) {
         this._pointsModel.addPoint(data);
       }
 
-      if (this._mode === MODE.EDITING) {
-        this._pointsModel.updatePoint(UPDATE_TYPE.MAJOR, data);
+      if (this._mode === Mode.EDITING) {
+        this._pointsModel.updatePoint(UpdateType.MAJOR, data);
       }
     });
 
@@ -74,15 +74,15 @@ export default class PointPresenter {
 
 
     if (oldPoint === undefined || oldEditor === undefined) {
-      if (this._mode === MODE.DEFAULT) {
+      if (this._mode === Mode.DEFAULT) {
         render(this._container, this._pointComponent, RenderPosition.AFTERBEGIN);
 
         return;
       }
 
-      if (this._mode === MODE.ADD) {
+      if (this._mode === Mode.ADD) {
         render(this._container, this._pointEditorComponent, RenderPosition.AFTERBEGIN);
-        document.addEventListener(`keydown`, this._closeEditorByEsc);
+        document.addEventListener(`keydown`, this._editorCloseByEscHandler);
 
         return;
       }
@@ -94,7 +94,7 @@ export default class PointPresenter {
       return;
     }
 
-    if (this._mode !== MODE.DEFAULT) {
+    if (this._mode !== Mode.DEFAULT) {
       if (oldPoint.parentElement === undefined) {
         replace(this._pointEditorComponent, oldEditor);
         return;
@@ -102,27 +102,27 @@ export default class PointPresenter {
       replace(this._pointEditorComponent, oldPoint);
     }
 
-    if (this._mode === MODE.DEFAULT) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._pointComponent, oldPoint);
     }
   }
 
-  _closeEditor() {
+  _editorCloseHandler() {
     document.removeEventListener(`keydown`, this.closeEditorByEsc);
 
     replace(this._pointComponent, this._pointEditorComponent);
-    this._mode = MODE.DEFAULT;
+    this._mode = Mode.DEFAULT;
   }
 
-  _closeEditorByEsc(e) {
-    if ((e.key === `Escape` || e.key === `Esc`) && this._mode !== MODE.DEFAULT) {
-      this._closeEditor();
+  _editorCloseByEscHandler(e) {
+    if ((e.key === `Escape` || e.key === `Esc`) && this._mode !== Mode.DEFAULT) {
+      this._editorCloseHandler();
     }
   }
 
   resetView() {
-    if (this._mode !== MODE.DEFAULT) {
-      this._closeEditor();
+    if (this._mode !== Mode.DEFAULT) {
+      this._editorCloseHandler();
     }
   }
 

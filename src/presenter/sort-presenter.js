@@ -1,11 +1,11 @@
 import Sorting from '../view/sorting';
 import {render, RenderPosition} from '../helpers/utils';
-import {SORT_TYPE} from '../mock/constants';
+import {SortType} from '../mock/constants';
 
-export default class SortingPresenter {
+export default class SortPresenter {
   constructor(container, filterModel) {
     this._container = container;
-    this.currentValue = SORT_TYPE.DAY;
+    this.currentValue = SortType.DAY;
     this._filterModel = filterModel;
 
     this.handleModelEvent = this.handleModelEvent.bind(this);

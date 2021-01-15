@@ -33,21 +33,21 @@ export const createSorting = () => {
 export default class Sorting extends SmartWithHandlers {
   constructor() {
     super();
-    this._changeSort = this._changeSort.bind(this);
+    this._sortChangeHandler = this._sortChangeHandler.bind(this);
   }
 
   getTemplate() {
     return createSorting();
   }
 
-  _changeSort(e) {
+  _sortChangeHandler(e) {
     e.preventDefault();
     this._cb(e.target.value);
   }
 
   setHandler(cb) {
     this._cb = cb;
-    this.getElement().addEventListener(`change`, this._changeSort);
+    this.getElement().addEventListener(`change`, this._sortChangeHandler);
   }
 
   restoreHandlers() {

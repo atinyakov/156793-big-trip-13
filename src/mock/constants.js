@@ -1,26 +1,26 @@
-export const FILTER_TYPE = {
+export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`,
 };
 
-export const SORT_TYPE = {
+export const SortType = {
   DAY: `sort-day`,
   TIME: `sort-time`,
   PRICE: `sort-price`,
 };
 
-export const UPDATE_TYPE = {
+export const UpdateType = {
   PATCH: `PATCH`,
   MAJOR: `MAJOR`
 };
 
-export const MODE = {
+export const Mode = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`,
   ADD: `ADD`
 };
 
-export const API_CODES = {
+export const ApiCodes = {
   OK: 200
 };

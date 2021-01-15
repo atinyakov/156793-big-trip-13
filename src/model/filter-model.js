@@ -1,10 +1,10 @@
-import {FILTER_TYPE} from '../mock/constants';
+import {FilterType} from '../mock/constants';
 import Observer from '../helpers/observers';
 
 export default class FilterModel extends Observer {
   constructor() {
     super();
-    this._filter = FILTER_TYPE.EVERYTHING;
+    this._filter = FilterType.EVERYTHING;
   }
 
   setFilter(filter) {

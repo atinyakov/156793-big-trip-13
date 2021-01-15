@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import Filters from "../view/filters";
 import {render, RenderPosition} from '../helpers/utils';
+
 export default class FilterPresenter {
   constructor(container, pointsModel, filterModel) {
     this._container = container;
