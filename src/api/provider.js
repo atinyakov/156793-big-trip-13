@@ -1,12 +1,16 @@
 import {isOnline} from '../helpers/utils';
 import toast from "../helpers/toast/toast.js";
-import {API_CODES} from '../mock/constants';
+import {ApiCodes} from '../mock/constants';
 
 export default class Provider {
   constructor(api, store) {
     this._api = api;
     this._store = store;
     this._needSync = false;
+  }
+
+  get needSync() {
+    return this._needSync;
   }
 
   getPoints() {
@@ -46,7 +50,7 @@ export default class Provider {
     this._store.updateItem(update);
     this._needSync = true;
 
-    return Promise.resolve(Object.assign(update, {status: API_CODES.OK}));
+    return Promise.resolve(Object.assign(update, {status: ApiCodes.OK}));
   }
 
   createData(update) {
@@ -72,10 +76,6 @@ export default class Provider {
       return created;
     }
     return Promise.reject(`Cant delete in offline`);
-  }
-
-  get needSync() {
-    return this._needSync;
   }
 
   sync() {

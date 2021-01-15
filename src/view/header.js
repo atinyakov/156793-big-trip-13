@@ -3,13 +3,17 @@ import Smart from './smart';
 
 
 const createHeader = (points) => {
-  const cost = points.length ? points.reduce((acc, {price, offers})=> {
-    const offersPrice = offers.reduce((offAcc, el) => offAcc + +el.price, 0);
+  const cost = points.length ? points.reduce((acc, {offers, price}) => {
+    let offersPrice = 0;
+
+    if (offers !== undefined) {
+      offersPrice = offers.reduce((offAcc, el) => offAcc + +el.price, offersPrice);
+    }
 
     return acc + +price + offersPrice;
   }, 0) : 0;
 
-  const title = () => {
+  const createTitle = () => {
     if (points.length === 0) {
       return ``;
     }
@@ -21,7 +25,7 @@ const createHeader = (points) => {
 
   return `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
-    <h1 class="trip-info__title">${title()}</h1>
+    <h1 class="trip-info__title">${createTitle()}</h1>
 
     <p class="trip-info__dates">${points.length ? dayjs(points[0].startTime).format(`MMM D`) : ``} &nbsp; &mdash;&nbsp;${points.length ? dayjs(points[points.length - 1].endTime).format(`MMM D`) : ``}</p>
   </div>

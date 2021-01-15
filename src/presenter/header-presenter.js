@@ -1,7 +1,7 @@
 import Header from '../view/header';
 import {render, RenderPosition} from '../helpers/utils';
 
-export default class StatsPresenter {
+export default class HeaderPresenter {
   constructor(container, pointsModel, filterModel) {
     this._container = container;
     this._pointsModel = pointsModel;

@@ -1,4 +1,4 @@
-import {API_CODES} from '../mock/constants';
+import {ApiCodes} from '../mock/constants';
 export default class API {
   constructor(url, auth) {
     this._url = url;
@@ -8,7 +8,7 @@ export default class API {
   getPoints() {
     return this._client(`/points`)
     .then((res) => {
-      if (res.status === API_CODES.OK) {
+      if (res.status === ApiCodes.OK) {
         return res;
       }
       return new Error(`Ошибка запроса точек маршрута`);
@@ -20,7 +20,7 @@ export default class API {
   getData(querry) {
     return this._client(querry)
     .then((res) => {
-      if (res.status === API_CODES.OK) {
+      if (res.status === ApiCodes.OK) {
         return res;
       }
       return new Error(`Ошибка запроса дополнительных опций`);
@@ -38,7 +38,7 @@ export default class API {
     const body = this._mapToServer(update);
     return this._client(`/points`, {method: `POST`, body})
     .then((res) => {
-      if (res.status === API_CODES.OK) {
+      if (res.status === ApiCodes.OK) {
         return res;
       }
       throw new Error(`Cant add point`);

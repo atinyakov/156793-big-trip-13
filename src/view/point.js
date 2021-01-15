@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import Abstract from './abstract';
 
 
-const duration = (start, end) => {
+const calculateDuration = (start, end) => {
   const minutes = dayjs(end).diff(start, `m`);
   if (minutes / 60 < 1) {
     return `${minutes} М`;
@@ -35,7 +35,7 @@ const createTemplate = ({
         &mdash;
         <time class="event__end-time" datetime="${endTime}">${dayjs(endTime).format(`H:mm`)}</time>
       </p>
-      <p class="event__duration">${duration(startTime, endTime)}</p>
+      <p class="event__duration">${calculateDuration(startTime, endTime)}</p>
     </div>
     <p class="event__price">
       &euro;&nbsp;<span class="event__price-value">${eventPrice}</span>

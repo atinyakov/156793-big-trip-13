@@ -2,8 +2,8 @@
 import Empty from "../view/empty";
 import PointPresenter from './point-presenter';
 import FilterPresenter from './filter-presenter';
-import SortingPresenter from './sort-presenter';
-import {SORT_TYPE, UPDATE_TYPE, MODE, FILTER_TYPE} from '../mock/constants';
+import SortPresenter from './sort-presenter';
+import {SortType, UpdateType, Mode, FilterType} from '../mock/constants';
 
 import {render, RenderPosition} from '../helpers/utils';
 import Observers from '../helpers/observers';
@@ -34,7 +34,7 @@ export default class TripPresenter {
   }
 
   _renderSorting(target) {
-    this._sorting = new SortingPresenter(target, this._filterModel);
+    this._sorting = new SortPresenter(target, this._filterModel);
     this._sorting.init();
 
     this._sorting.setHandler(() => {
@@ -49,26 +49,26 @@ export default class TripPresenter {
     }
 
     this. _resetPoints();
-    this._sorting.setCurrentValue(SORT_TYPE.DAY);
+    this._sorting.setCurrentValue(SortType.DAY);
     this._sorting.handleModelEvent();
-    this._filterModel.setFilter(FILTER_TYPE.EVERYTHING);
+    this._filterModel.setFilter(FilterType.EVERYTHING);
     this._filters.handleFilterChange();
 
     this._newPoint = new PointPresenter(this._newPointContainer, this._pointsModel, this.resetPoints, this._filterModel);
-    this._newPoint.init({}, MODE.ADD);
+    this._newPoint.init({}, Mode.ADD);
     this._pointObserver.subscribe(this._newPoint);
   }
 
   _renderPoint(container, point) {
     const pointPresenter = new PointPresenter(container, this._pointsModel, this.resetPoints, this._filterModel);
-    pointPresenter.init(point, MODE.DEFAULT);
+    pointPresenter.init(point, Mode.DEFAULT);
     this._pointObserver.subscribe(pointPresenter);
 
   }
 
   _handleModelEvent(updateType, point) {
     switch (updateType) {
-      case UPDATE_TYPE.PATCH:
+      case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
         this._pointObserver.run((el) => {
           if (el.getPointData().id === point.id) {
@@ -76,7 +76,7 @@ export default class TripPresenter {
           }
         });
         break;
-      case UPDATE_TYPE.MAJOR:
+      case UpdateType.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
         this._resetPoints();
         this._clearTrip();
@@ -90,7 +90,7 @@ export default class TripPresenter {
 
     this._filters.init();
     this._filters.setFilterHandler(() => {
-      this._sorting.setCurrentValue(SORT_TYPE.DAY);
+      this._sorting.setCurrentValue(SortType.DAY);
 
       this._clearTrip();
       this._renderTrip();
@@ -108,17 +108,17 @@ export default class TripPresenter {
     const filter = this._sorting.getCurrentValue();
 
     switch (filter) {
-      case SORT_TYPE.DAY:
+      case SortType.DAY:
         this._points = this._points.sort((a, b) => {
           return dayjs(a.startTime).diff(b.startTime, `m`) < 0 ? -1 : 1;
         });
         break;
-      case SORT_TYPE.TIME:
+      case SortType.TIME:
         this._points = this._points.sort((a, b) => {
           return dayjs(a.startTime).diff(a.endTime, `m`) - dayjs(b.startTime).diff(b.endTime, `m`) > 0 ? -1 : 1;
         });
         break;
-      case SORT_TYPE.PRICE:
+      case SortType.PRICE:
         this._points = this._points.sort((a, b) => {
           return a.price - b.price < 0 ? -1 : 1;
         });
@@ -160,7 +160,7 @@ export default class TripPresenter {
 
   hide() {
     this._container.classList.add(`trip-events--hidden`);
-    this._sorting.setCurrentValue(SORT_TYPE.DAY);
+    this._sorting.setCurrentValue(SortType.DAY);
     this._sorting.handleModelEvent();
     this._clearTrip();
   }
